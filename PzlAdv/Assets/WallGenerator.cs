@@ -5,7 +5,7 @@ using UnityEngine;
 public class WallGenerator : MonoBehaviour
 {
     public GameObject wallPrefab;
-    float span = 1.0;
+    float span = 1.0f;
     float delta;
 
     // Start is called before the first frame update
@@ -23,7 +23,7 @@ public class WallGenerator : MonoBehaviour
             this.delta = 0;
             GameObject go = Instantiate(wallPrefab) as GameObject;
             int px = Random.Range(-6, 7);
-            go.transform.position = new Vector3(px, 7, 0);
+            go.transform.position = new Vector3(px, 5, 0);
 		}
     }
 }
