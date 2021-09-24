@@ -6,21 +6,18 @@ public class slimeContoroller : MonoBehaviour
 {
     //なんか色々と初期設定
     public Rigidbody2D rigid;
-    float speed = 5.0f;
-    int ax, ay; //移動方向
-    float vx = 0, vy = 0;   //ベクトルの向き
-    public int gx = 0, gy = 0;     //目指す座標
-    public bool isMoving = false;  //移動中ならtrueそうでなければfalse
+    float speed = 5.0f; //移動スピード
+    int direction = 0; //向き(0:↑, 1:→, 2:↓, 3:←)
+    Vector2 vector = new Vector2(0, 0);   //移動のベクトル
+    Vector2 goalPos = new Vector2(0, 0);    //移動で目指す座標
+    bool isMoving = false;  //移動中ならtrueそうでなければfalse
 
     // Start is called before the first frame update
     void Start()
     {
-        //this.rigid = this.GetComponent<Rigidbody2D>();
-
-        //適当にスタート地点決める
-        this.gx = 0;
-        this.gy = 0;
-        this.transform.position = new Vector2(this.gx, this.gy);
+        //初期位置へ移動
+        //↑これを変更したければgoalPosの値を弄る
+        this.transform.position = goalPos;
     }
 
 
@@ -28,84 +25,87 @@ public class slimeContoroller : MonoBehaviour
     void Update()
     {
 
-        //移動中ではないのでキー入力待ち
+        //移動中ではない
         if (this.isMoving == false)
         {
-            //axとayを0にする
-            this.ax = 0;
-            this.ay = 0;
+            //上下左右のキー入力を受けたら
+            //isMovingをtrueにしてdirectionを更新
+            this.isMoving = true;
+            if (Input.GetKeyDown(KeyCode.UpArrow)) //↑
+            {
+                this.direction = 0;
+                this.goalPos.y += 1;
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow))  //→
+            {
+                this.direction = 1;
+                this.goalPos.x += 1;
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow))   //↓
+            {
+                this.direction = 2;
+                this.goalPos.y -= 1;
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow))   //←
+            {
+                this.direction = 3;
+                this.goalPos.x -= 1;
+            }
+            else
+            {
+                this.isMoving = false;
+            }
 
-            //上下左右のキー入力を受けた
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            //次のフレームから移動開始
+            if (this.isMoving = true)
             {
-                this.ax = -1;
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                this.ax = 1;
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                this.ay = -1;
-            }
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                this.ay = 1;
-            }
-
-            //移動することになった
-            if (this.ax != 0 || this.ay != 0)
-            {
-                this.isMoving = true;
-                this.gx += this.ax;
-                this.gy += this.ay;
+                //現在は特に処理なし
             }
 
         }
 
-        //isMovingがtrueなので移動させる
+        //移動中
         if (this.isMoving == true)
         {
             //vxとvyを0にする
-            this.vx = 0;
-            this.vy = 0;
+            this.vector = new Vector2(0, 0);
 
             //x方向の移動
-            if (this.ax != 0)
+            if (this.direction % 2 == 1)
             {
-                if (this.transform.position.x < this.gx - 0.1)
+                if (this.transform.position.x < this.goalPos.x - 0.1)
                 {
-                    this.vx = speed;
+                    this.vector.x = speed;
                 }
-                else if (this.transform.position.x > this.gx + 0.1)
+                else if (this.transform.position.x > this.goalPos.x + 0.1)
                 {
-                    this.vx = -speed;
+                    this.vector.x = -speed;
                 }
                 else
                 {
-                    this.transform.position = new Vector2(this.gx, this.transform.position.y);
+                    this.transform.position = new Vector2(this.goalPos.x, this.transform.position.y);
                     this.isMoving = false;
                 }
             }
             //y方向の移動
             else
             {
-                if (this.transform.position.y < this.gy - 0.1)
+                if (this.transform.position.y < this.goalPos.y - 0.1)
                 {
-                    this.vy = speed;
+                    this.vector.y = speed;
                 }
-                else if (this.transform.position.y > this.gy + 0.1)
+                else if (this.transform.position.y > this.goalPos.y + 0.1)
                 {
-                    this.vy = -speed;
+                    this.vector.y = -speed;
                 }
                 else
                 {
-                    this.transform.position = new Vector2(this.transform.position.x, this.gy);
+                    this.transform.position = new Vector2(this.transform.position.x, this.goalPos.y);
                     this.isMoving = false;
                 }
             }
-            //ベクトルに反映
-            this.rigid.velocity = new Vector2(this.vx, this.vy);
+            //実際のベクトルに反映
+            this.rigid.velocity = vector;
         }
     }
 }
