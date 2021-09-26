@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class slimeContoroller : MonoBehaviour
+public class PlayerContoroller : MonoBehaviour
 {
     //なんか色々と初期設定
     public Rigidbody2D rigid;
@@ -10,6 +10,7 @@ public class slimeContoroller : MonoBehaviour
     int direction = 0; //向き(0:↑, 1:→, 2:↓, 3:←)
     Vector2 vector = new Vector2(0, 0);   //移動のベクトル
     Vector2 goalPos = new Vector2(0, 0);    //移動で目指す座標
+    int tmp;    //なんか適当に使う
     bool isMoving = false;  //移動中ならtrueそうでなければfalse
 
     // Start is called before the first frame update
@@ -30,36 +31,47 @@ public class slimeContoroller : MonoBehaviour
         {
             //上下左右のキー入力を受けたら
             //isMovingをtrueにしてdirectionを更新
-            this.isMoving = true;
+            this.tmp = 0;
             if (Input.GetKeyDown(KeyCode.UpArrow)) //↑
             {
                 this.direction = 0;
-                this.goalPos.y += 1;
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))  //→
             {
                 this.direction = 1;
-                this.goalPos.x += 1;
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow))   //↓
             {
                 this.direction = 2;
-                this.goalPos.y -= 1;
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow))   //←
             {
                 this.direction = 3;
-                this.goalPos.x -= 1;
             }
             else
             {
-                this.isMoving = false;
+                this.tmp = 1;
             }
 
-            //次のフレームから移動開始
-            if (this.isMoving = true)
+            //移動開始
+            if (this.tmp == 0)
             {
-                //現在は特に処理なし
+                //移動先を検知する
+ 
+                //tmp = GetTargetID(this.goalPos + DirectionToVector2(direction));
+                if (tmp == 2)   //岩だったら
+                {
+                    //岩を押す関数を呼び出す
+                }
+                else if (tmp != 1)  //壁ではないなら
+                {
+                    //goalPosを更新
+                    this.goalPos = this.goalPos + DirectionToVector2(direction);
+                }
+
+                //これで移動させる
+                StartMoving();
+
             }
 
         }
@@ -67,10 +79,14 @@ public class slimeContoroller : MonoBehaviour
         //移動中
         if (this.isMoving == true)
         {
-            //vxとvyを0にする
-            this.vector = new Vector2(0, 0);
+            //goalPosに到着していたら停止
+            if (CheckMoving())
+            {
+                FinishMoving();
+            }
 
-            //x方向の移動
+
+            /*//x方向の移動
             if (this.direction % 2 == 1)
             {
                 if (this.transform.position.x < this.goalPos.x - 0.1)
@@ -104,8 +120,83 @@ public class slimeContoroller : MonoBehaviour
                     this.isMoving = false;
                 }
             }
-            //実際のベクトルに反映
-            this.rigid.velocity = vector;
+            */
         }
+    }
+
+    //int型のdirectionをVector2に変換
+    Vector2 DirectionToVector2(int direction)
+    {
+        Vector2 result = new Vector2(0, 0);
+
+        switch(direction)
+        {
+            case 0:
+                result.y = 1;
+                break;
+            case 1:
+                result.x = 1;
+                break;
+            case 2:
+                result.y = -1;
+                break;
+            case 3:
+                result.x = -1;
+                break;
+        }
+        return result;
+    }
+
+    //移動を開始する処理
+    void StartMoving()
+    {
+        this.vector = DirectionToVector2(this.direction);
+        this.vector *= this.speed;
+
+        this.rigid.velocity = vector;
+
+        isMoving = true;
+    }
+
+    //移動を終了する処理
+    void FinishMoving()
+    {
+        this.transform.position = this.goalPos;
+        this.vector = new Vector2(0, 0);
+        this.rigid.velocity = vector;
+
+        isMoving = false;
+    }
+
+    //移動を終了すべきかチェック
+    bool CheckMoving()
+    {
+        bool result = false;
+
+        if (this.direction == 0 && this.transform.position.y >= this.goalPos.y)
+        {
+            result = true;
+        }
+        else if (this.direction == 1 && this.transform.position.x >= this.goalPos.x)
+        {
+            result = true;
+        }
+        else if (this.direction == 2 && this.transform.position.y <= this.goalPos.y)
+        {
+            result = true;
+        }
+        else if (this.direction == 3 && this.transform.position.x <= this.goalPos.x)
+        {
+            result = true;
+        }
+
+        //goalPosへの移動は完了しているが…
+        if (result)
+        {
+            //もし地面が氷なら移動継続
+            //result false;
+        }
+
+        return result;
     }
 }
