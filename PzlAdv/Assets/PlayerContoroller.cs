@@ -10,7 +10,7 @@ public class PlayerContoroller : MonoBehaviour
     int direction = 0; //向き(0:↑, 1:→, 2:↓, 3:←)
     Vector2 vector = new Vector2(0, 0);   //移動のベクトル
     Vector2 goalPos = new Vector2(0, 0);    //移動で目指す座標
-    int tmp;    //なんか適当に使う
+    bool getKey;    //キー入力があったかの判定用
     bool isMoving = false;  //移動中ならtrueそうでなければfalse
 
     // Start is called before the first frame update
@@ -31,7 +31,7 @@ public class PlayerContoroller : MonoBehaviour
         {
             //上下左右のキー入力を受けたら
             //isMovingをtrueにしてdirectionを更新
-            this.tmp = 0;
+            this.getKey = true;
             if (Input.GetKeyDown(KeyCode.UpArrow)) //↑
             {
                 this.direction = 0;
@@ -50,26 +50,12 @@ public class PlayerContoroller : MonoBehaviour
             }
             else
             {
-                this.tmp = 1;
+                this.getKey = false;
             }
 
-            //移動開始
-            if (this.tmp == 0)
-            {
-                //移動先を検知する
- 
-                //tmp = GetTargetID(this.goalPos + DirectionToVector2(direction));
-                if (tmp == 2)   //岩だったら
-                {
-                    //岩を押す関数を呼び出す
-                }
-                else if (tmp != 1)  //壁ではないなら
-                {
-                    //goalPosを更新
-                    this.goalPos = this.goalPos + DirectionToVector2(direction);
-                }
-
-                //これで移動させる
+            //移動開始させる
+            if (this.getKey == true)
+            {             
                 StartMoving();
 
             }
@@ -84,7 +70,6 @@ public class PlayerContoroller : MonoBehaviour
             {
                 FinishMoving();
             }
-
 
             /*//x方向の移動
             if (this.direction % 2 == 1)
@@ -150,6 +135,18 @@ public class PlayerContoroller : MonoBehaviour
     //移動を開始する処理
     void StartMoving()
     {
+        //まず向いてる方向1マス先をgoalPosに設定
+        int type = 0; //GetTargetID(this.goalPos + DirectionToVector2(direction));
+        if (type == 2)   //岩だったら
+        {
+            //岩を押す関数を呼び出す
+        }
+        else
+        {
+            //goalPosを更新
+            this.goalPos = this.goalPos + DirectionToVector2(direction);
+        }
+
         this.vector = DirectionToVector2(this.direction);
         this.vector *= this.speed;
 
@@ -194,7 +191,7 @@ public class PlayerContoroller : MonoBehaviour
         if (result)
         {
             //もし地面が氷なら移動継続
-            //result false;
+            //result = false;
         }
 
         return result;
