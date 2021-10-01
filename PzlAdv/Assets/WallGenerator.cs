@@ -5,7 +5,7 @@ using UnityEngine;
 public class WallGenerator : MonoBehaviour
 {
     public GameObject wallPrefab;
-    float span = 1.0f;
+    //float span = 1.0f;
     float delta;
     int[,] board;
 
