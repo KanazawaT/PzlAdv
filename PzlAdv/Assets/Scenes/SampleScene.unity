@@ -391,6 +391,7 @@ GameObject:
   - component: {fileID: 1760482938}
   - component: {fileID: 1760482937}
   - component: {fileID: 1760482939}
+  - component: {fileID: 1760482940}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Untagged
@@ -497,9 +498,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigid: {fileID: 1760482937}
-  gx: 0
-  gy: 0
-  isMoving: 0
 --- !u!61 &1760482939
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -526,3 +524,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
+--- !u!95 &1760482940
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760482934}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 529baff997c6ee24fbb8f4c3255af484, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
