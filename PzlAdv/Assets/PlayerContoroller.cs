@@ -12,6 +12,7 @@ public class PlayerContoroller : MonoBehaviour
     Vector2 goalPos = new Vector2(0, 0);    //移動で目指す座標
     bool getKey;    //キー入力があったかの判定用
     bool isMoving = false;  //移動中ならtrueそうでなければfalse
+    Animator anim;       //アニメ制御用
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,7 @@ public class PlayerContoroller : MonoBehaviour
         //初期位置へ移動
         //↑これを変更したければgoalPosの値を弄る
         this.transform.position = goalPos;
+        this.anim = GetComponent<Animator>();   //アニメ制御用
     }
 
 
@@ -35,18 +37,22 @@ public class PlayerContoroller : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.UpArrow)) //↑
             {
                 this.direction = 0;
+                anim.SetInteger("direction", 0);    //direction変更時にアニメ用のdirectionも変更
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))  //→
             {
                 this.direction = 1;
+                anim.SetInteger("direction", 1);
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow))   //↓
             {
                 this.direction = 2;
+                anim.SetInteger("direction", 2);
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow))   //←
             {
                 this.direction = 3;
+                anim.SetInteger("direction", 3);
             }
             else
             {
