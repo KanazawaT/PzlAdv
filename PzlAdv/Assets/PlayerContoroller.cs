@@ -8,18 +8,22 @@ public class PlayerContoroller : MonoBehaviour
     public Rigidbody2D rigid;
     float speed = 5.0f; //移動スピード
     int direction = 0; //向き(0:↑, 1:→, 2:↓, 3:←)
-    Vector2 vector = new Vector2(0, 0);   //移動のベクトル
-    Vector2 goalPos = new Vector2(0, 0);    //移動で目指す座標
+    public Vector2 motion;   //移動のベクトル
+    Vector2 goalPosF;    //移動で目指す実際の座標
+    Vector2Int goalPosI;     //マス目上の移動先座標
     bool getKey;    //キー入力があったかの判定用
     bool isMoving = false;  //移動中ならtrueそうでなければfalse
+    float heightProp = 0.5f;    //マスの縦の比率を設定する(1.0fで横と同じ、0.5fで半分)
     Animator anim;       //アニメ制御用
 
     // Start is called before the first frame update
     void Start()
     {
-        //初期位置へ移動
-        //↑これを変更したければgoalPosの値を弄る
-        this.transform.position = goalPos;
+        //初期位置を設定して配置
+        goalPosI = new Vector2Int(0, 0);    //ここで初期位置を設定
+        goalPosF = ChangePosType(goalPosI);
+        this.transform.position = goalPosF;
+
         this.anim = GetComponent<Animator>();   //アニメ制御用
     }
 
@@ -76,97 +80,77 @@ public class PlayerContoroller : MonoBehaviour
             {
                 FinishMoving();
             }
-
-            /*//x方向の移動
-            if (this.direction % 2 == 1)
-            {
-                if (this.transform.position.x < this.goalPos.x - 0.1)
-                {
-                    this.vector.x = speed;
-                }
-                else if (this.transform.position.x > this.goalPos.x + 0.1)
-                {
-                    this.vector.x = -speed;
-                }
-                else
-                {
-                    this.transform.position = new Vector2(this.goalPos.x, this.transform.position.y);
-                    this.isMoving = false;
-                }
-            }
-            //y方向の移動
-            else
-            {
-                if (this.transform.position.y < this.goalPos.y - 0.1)
-                {
-                    this.vector.y = speed;
-                }
-                else if (this.transform.position.y > this.goalPos.y + 0.1)
-                {
-                    this.vector.y = -speed;
-                }
-                else
-                {
-                    this.transform.position = new Vector2(this.transform.position.x, this.goalPos.y);
-                    this.isMoving = false;
-                }
-            }
-            */
         }
     }
 
     //int型のdirectionをVector2に変換
-    Vector2 DirectionToVector2(int direction)
+    Vector2Int DirectionToVector2(int direction)
     {
-        Vector2 result = new Vector2(0, 0);
+        Vector2Int result;
 
         switch(direction)
         {
             case 0:
-                result.y = 1;
+                result = Vector2Int.up;
                 break;
             case 1:
-                result.x = 1;
+                result = Vector2Int.right;
                 break;
             case 2:
-                result.y = -1;
+                result = Vector2Int.down;
                 break;
-            case 3:
-                result.x = -1;
+            default:
+                result = Vector2Int.left;
                 break;
         }
         return result;
     }
 
+    //マス目上の座標を実際の座標に変換
+    Vector2 ChangePosType(Vector2Int vectorI)
+    {
+        return new Vector2(vectorI.x, vectorI.y * heightProp);
+    }
+
     //移動を開始する処理
     void StartMoving()
     {
-        //まず向いてる方向1マス先をgoalPosに設定
-        int type = 0; //GetTargetID(this.goalPos + DirectionToVector2(direction));
-        if (type == 2)   //岩だったら
+        //目標の移動先をnewPosに設定
+        Vector2Int newPos = goalPosI + DirectionToVector2(direction);
+
+        //移動先がどんなか確かめる
+        int type = 0; //GetTargetID(); 今は仮で0をいれてます
+        switch (type)
         {
-            //岩を押す関数を呼び出す
+            case 2: //岩
+                    //岩を押す処理
+            case 1: //壁
+                //移動開始に失敗
+                this.isMoving = false;
+                //失敗時の共通処理とかあればここに
+                break;
+            default: //その他
+                //移動開始に成功
+                this.isMoving = true;
+                //gxとgyを更新
+                this.goalPosI = newPos;
+                //goalPosを更新
+                this.goalPosF = ChangePosType(goalPosI);
+                //motionに値を反映、rigidも更新
+                this.motion = DirectionToVector2(this.direction);
+                this.motion *= this.speed;
+                //this.motion.y *= heightProp;  //縦移動の際に移動速度を変える処理
+                this.rigid.velocity = this.motion;
+                break;
         }
-        else
-        {
-            //goalPosを更新
-            this.goalPos = this.goalPos + DirectionToVector2(direction);
-        }
-
-        this.vector = DirectionToVector2(this.direction);
-        this.vector *= this.speed;
-
-        this.rigid.velocity = vector;
-
-        isMoving = true;
     }
 
     //移動を終了する処理
     void FinishMoving()
     {
-        this.transform.position = this.goalPos;
-        this.vector = new Vector2(0, 0);
-        this.rigid.velocity = vector;
+        this.transform.position = this.goalPosF;
+        this.motion = Vector2.zero;
+        this.rigid.velocity = motion;
 
         isMoving = false;
     }
@@ -176,19 +160,19 @@ public class PlayerContoroller : MonoBehaviour
     {
         bool result = false;
 
-        if (this.direction == 0 && this.transform.position.y >= this.goalPos.y)
+        if (this.direction == 0 && this.transform.position.y >= this.goalPosF.y)
         {
             result = true;
         }
-        else if (this.direction == 1 && this.transform.position.x >= this.goalPos.x)
+        else if (this.direction == 1 && this.transform.position.x >= this.goalPosF.x)
         {
             result = true;
         }
-        else if (this.direction == 2 && this.transform.position.y <= this.goalPos.y)
+        else if (this.direction == 2 && this.transform.position.y <= this.goalPosF.y)
         {
             result = true;
         }
-        else if (this.direction == 3 && this.transform.position.x <= this.goalPos.x)
+        else if (this.direction == 3 && this.transform.position.x <= this.goalPosF.x)
         {
             result = true;
         }
