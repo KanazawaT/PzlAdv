@@ -6,7 +6,7 @@ public class PlayerContoroller : MonoBehaviour
 {
     //なんか色々と初期設定
     public Rigidbody2D rigid;
-    float speed = 5.0f; //移動スピード
+    float speed = 3.0f; //移動スピード
     int direction = 0; //向き(0:↑, 1:→, 2:↓, 3:←)
     public Vector2 motion;   //移動のベクトル
     Vector2 goalPosF;    //移動で目指す実際の座標
@@ -38,22 +38,22 @@ public class PlayerContoroller : MonoBehaviour
             //上下左右のキー入力を受けたら
             //isMovingをtrueにしてdirectionを更新
             this.getKey = true;
-            if (Input.GetKeyDown(KeyCode.UpArrow)) //↑
+            if (Input.GetKey(KeyCode.UpArrow)) //↑
             {
                 this.direction = 0;
                 anim.SetInteger("direction", 0);    //direction変更時にアニメ用のdirectionも変更
             }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))  //→
+            else if (Input.GetKey(KeyCode.RightArrow))  //→
             {
                 this.direction = 1;
                 anim.SetInteger("direction", 1);
             }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))   //↓
+            else if (Input.GetKey(KeyCode.DownArrow))   //↓
             {
                 this.direction = 2;
                 anim.SetInteger("direction", 2);
             }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))   //←
+            else if (Input.GetKey(KeyCode.LeftArrow))   //←
             {
                 this.direction = 3;
                 anim.SetInteger("direction", 3);
