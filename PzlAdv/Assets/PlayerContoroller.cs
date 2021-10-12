@@ -127,11 +127,13 @@ public class PlayerContoroller : MonoBehaviour
             case 1: //壁
                 //移動開始に失敗
                 this.isMoving = false;
+                anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
                 //失敗時の共通処理とかあればここに
                 break;
             default: //その他
                 //移動開始に成功
                 this.isMoving = true;
+                anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
                 //gxとgyを更新
                 this.goalPosI = newPos;
                 //goalPosを更新
@@ -153,6 +155,7 @@ public class PlayerContoroller : MonoBehaviour
         this.rigid.velocity = motion;
 
         isMoving = false;
+        anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
     }
 
     //移動を終了すべきかチェック
