@@ -53,11 +53,11 @@ public class StageManager : MonoBehaviour
 					{
                         case 1:
                             go = Instantiate(this.wallPrefab) as GameObject;
-                            go.transform.position = new Vector3(x, y, 0);
+                            go.transform.position = new Vector3(x, y, 10);
                             break;
                         case 2:
                             go = Instantiate(this.stonePrefab) as GameObject;
-                            go.transform.position = new Vector3(x, y, 0);
+                            go.transform.position = new Vector3(x, y, 10);
                             /*this.terrain[objectCount].gameObject = go;
                             this.terrain[objectCount].id = 2;
                             this.terrain[objectCount].x = x;
