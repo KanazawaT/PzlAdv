@@ -10,9 +10,10 @@ public class OverObject//動かせるギミック用
 
 public class StageManager : MonoBehaviour
 {
-    
 
-    public GameObject wallPrefab;//WallPrefab;
+    public GameObject floorPrefab;//床
+    public GameObject wallPrefab1;//WallPrefab;
+    public GameObject wallPrefab2;
     public GameObject stonePrefab;//岩のプレハブ
     
     public const int maxObjNum = 10;//動かせるオブジェクトの最大数
@@ -27,15 +28,15 @@ public class StageManager : MonoBehaviour
     {
         this.Board = new int[stageWidth, stageHeight]//マップをここで作る
         {
+            { 2,2,2,2,2,2,2,2,2,2},
             { 1,1,1,1,1,1,1,1,1,1},
-            { 1,0,0,1,0,1,0,0,0,1},
-            { 1,0,2,0,0,1,0,0,0,1},
-            { 1,0,0,1,0,0,0,0,0,1},
-            { 1,1,0,0,0,0,0,1,1,1},
-            { 1,0,0,0,0,0,0,0,0,1},
-            { 1,1,1,0,1,0,0,0,0,1},
-            { 1,0,0,2,0,1,0,0,0,1},
-            { 1,0,0,0,0,0,0,0,0,1},
+            { 1,0,0,0,0,1,0,0,0,1},
+            { 1,0,0,0,0,1,0,0,0,1},
+            { 1,0,0,0,0,0,0,2,2,1},
+            { 1,0,0,0,0,0,0,1,1,1},
+            { 1,0,0,0,2,0,0,0,0,1},
+            { 1,0,0,0,1,0,0,0,0,1},
+            { 1,2,2,2,1,2,2,2,2,1},
             { 1,1,1,1,1,1,1,1,1,1}
 
         };
@@ -45,29 +46,32 @@ public class StageManager : MonoBehaviour
         {
             for (int y = 0; y < stageHeight; y++)
             {
-                if (this.Board[x, y] != 0)
-                {
-                    GameObject go;
+                
+                GameObject go;
 
-                    switch (this.Board[x, y])
-					{
-                        case 1:
-                            go = Instantiate(this.wallPrefab) as GameObject;
-                            go.transform.position = new Vector3(x, y, 10);
-                            break;
-                        case 2:
-                            go = Instantiate(this.stonePrefab) as GameObject;
-                            go.transform.position = new Vector3(x, y, 10);
-                            /*this.terrain[objectCount].gameObject = go;
-                            this.terrain[objectCount].id = 2;
-                            this.terrain[objectCount].x = x;
-                            this.terrain[objectCount].y = y;
-                            this.Board[x, y] = 0;
+                switch (this.Board[y, x])
+				{
+                    case 0:
+                        go = Instantiate(this.floorPrefab) as GameObject;
+                        go.transform.position = new Vector3(x, y/2.0f, 10);
+                        break;
+                    case 1:
+                        go = Instantiate(this.wallPrefab1) as GameObject;
+                        go.transform.position = new Vector3(x, y/2.0f, 10);
+                        break;
+                    case 2:
+                        go = Instantiate(this.wallPrefab2) as GameObject;
+                        go.transform.position = new Vector3(x, y/2.0f, 10);
+                        /*this.terrain[objectCount].gameObject = go;
+                        this.terrain[objectCount].id = 2;
+                        this.terrain[objectCount].x = x;
+                        this.terrain[objectCount].y = y;
+                        this.Board[x, y] = 0;
                             
-                            objectCount++;*/
-                            break;
-                    }
+                        objectCount++;*/
+                        break;
                 }
+               
             }
         }
 
