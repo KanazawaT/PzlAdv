@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class OverObject//動かせるギミック用
 {
+    public OverObject()
+	{
+        this.x = 0;
+        this.y = 0;
+        this.id = 0;
+	}
     public GameObject gameObject;
     public int x, y,id;//GameObject型の座標系だとfloat型なのでint型を別で用意.あとそのオブジェクトのID
 }
@@ -16,7 +22,7 @@ public class StageManager : MonoBehaviour
     public GameObject wallPrefab2;
     public GameObject stonePrefab;//岩のプレハブ
     
-    public const int maxObjNum = 10;//動かせるオブジェクトの最大数
+    public const int maxObjNum = 1;//動かせるオブジェクトの最大数
     const int stageHeight = 10;
     const int stageWidth = 10;
 
@@ -31,17 +37,26 @@ public class StageManager : MonoBehaviour
             { 2,2,2,2,2,2,2,2,2,2},
             { 1,1,1,1,1,1,1,1,1,1},
             { 1,0,0,0,0,1,0,0,0,1},
-            { 1,0,0,0,0,1,0,0,0,1},
-            { 1,0,0,0,0,0,0,2,2,1},
+            { 1,0,0,0,0,1,0,2,2,1},
             { 1,0,0,0,0,0,0,1,1,1},
+            { 1,0,0,0,0,0,0,0,0,1},
             { 1,0,0,0,2,0,0,0,0,1},
             { 1,0,0,0,1,0,0,0,0,1},
             { 1,2,2,2,1,2,2,2,2,1},
             { 1,1,1,1,1,1,1,1,1,1}
 
         };
-        this.terrain = new OverObject[maxObjNum];
-        int objectCount = 0;//読み込んだ動かせるオブジェクト数を数える局所変数
+        this.terrain = new OverObject[maxObjNum];//岩などのオブジェクトを増やすたびにmaxObjectNumを書き換えること
+        for(int i = 0;i < maxObjNum; i++)
+		{
+            this.terrain[i] = new OverObject();
+		}
+        //岩の座標は一つずつ代入
+        this.terrain[0].id = 1;
+        this.terrain[0].x = 3;
+        this.terrain[0].y = 4;
+
+        //ステージ生成
         for (int x = 0; x < stageWidth; x++)
         {
             for (int y = 0; y < stageHeight; y++)
@@ -53,15 +68,15 @@ public class StageManager : MonoBehaviour
 				{
                     case 0:
                         go = Instantiate(this.floorPrefab) as GameObject;
-                        go.transform.position = new Vector3(x, y/2.0f, 10);
+                        go.transform.position = new Vector3(x, y/2.0f+0.25f, 10 + y);
                         break;
                     case 1:
                         go = Instantiate(this.wallPrefab1) as GameObject;
-                        go.transform.position = new Vector3(x, y/2.0f, 10);
+                        go.transform.position = new Vector3(x, y/2.0f + 0.25f, 10 + y);
                         break;
                     case 2:
                         go = Instantiate(this.wallPrefab2) as GameObject;
-                        go.transform.position = new Vector3(x, y/2.0f, 10);
+                        go.transform.position = new Vector3(x, y/2.0f + 0.25f, 10 + y);
                         /*this.terrain[objectCount].gameObject = go;
                         this.terrain[objectCount].id = 2;
                         this.terrain[objectCount].x = x;
@@ -74,6 +89,21 @@ public class StageManager : MonoBehaviour
                
             }
         }
+        //岩などのオブジェクト生成
+        for(int i = 0;i < maxObjNum; i++)
+		{
+            if (terrain[i].id != 0)
+			{
+                GameObject go;
+				switch(terrain[i].id){
+                    case 1:
+                        go = Instantiate(this.stonePrefab) as GameObject;
+                        go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
+                        terrain[i].gameObject = go;
+                    break;
+				}
+			}
+		}
 
     }
 

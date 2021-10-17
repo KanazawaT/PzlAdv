@@ -151,6 +151,7 @@ public class PlayerContoroller : MonoBehaviour
     void FinishMoving()
     {
         this.transform.position = this.goalPosF;
+        this.transform.Translate(0, 0, this.transform.position.y*2 - this.transform.position.z);//zç¿ïWÇyç¿ïWÇ…
         this.motion = Vector2.zero;
         this.rigid.velocity = motion;
 
