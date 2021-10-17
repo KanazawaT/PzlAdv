@@ -10,23 +10,25 @@ public class AdvManager : MonoBehaviour
     public Text mainText;
     public Text nameText;
     public Text titleText;
-    Animator titleTextA;
     public GameObject namePanel;
+    public GameObject material;
     //クリック待ち
     public Image waitMark;
 
-    const float WAIT_BC = 0.03f;        
+    //文字送りの速さ
+    const float WAIT_BC = 0.03f;
+
+    //オブジェクトのリスト
+    GameObject[] objList = new GameObject[10];
 
     //ページと行のキュー
     Queue<string> pageQ = new Queue<string>();
     Queue<char> lineQ = new Queue<char>();
 
-    bool isWaiting = true;
+    public bool isWaiting = true;
 
     void Start()
     {
-        titleTextA = titleText.GetComponent<Animator>();
-
         SplitText(Load("a"));
 
         ExecuteSymbol();
@@ -35,10 +37,10 @@ public class AdvManager : MonoBehaviour
     void Update()
     {
         //画面クリック
-        if (EventSystem.current.IsPointerOverGameObject())
+        /*if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
-        }
+        }*/
         if (Input.GetMouseButtonDown(0))
         {
             Click();
@@ -53,20 +55,24 @@ public class AdvManager : MonoBehaviour
     }
 
     //テキストを命令ごとにキューに格納
-    void SplitText(string loadedtext)
+    void SplitText(string loadedText)
     {
-        string[] splitText = loadedtext.Split('/');
+        string[] splitText = loadedText.Split('/');
         this.pageQ.Clear();
         foreach (string s in splitText)
         {
-            this.pageQ.Enqueue(s);
+            //空文字は除く
+            if (Equals(s, "") == false)
+            {
+                this.pageQ.Enqueue(s);
+            }
         }
     }
 
     //一行の命令を読み込み続ける
     void ExecuteSymbol()
     {
-        if (this.pageQ.Count <= 1)
+        if (this.pageQ.Count <= 0)
         {
 
             //終了処理
@@ -84,26 +90,39 @@ public class AdvManager : MonoBehaviour
 
         if (Equals(sType, "&"))
         {
+            //ページ送り
             NextPage(sText, true);
         }
         else if (Equals(sType, "|"))
         {
+            //テキスト表示
             NextLine(sText, true);
         }
         else if (Equals(sType, "#"))
         {
+            //タイトル表示
             Title(sText, true);
         }
         else if (Equals(sType, "+"))
         {
+            //クリック待ち
             isWaiting = true;
             waitMark.enabled = true;
+        }
+        else if (Equals(sType, "%"))
+        {
+            operation(sText, true);
+        }
+        else if (Equals(sType, "!"))
+        {
+            //オブジェ操作系
+            opeObj(sText, true);
         }
         
 
     }
 
-    //改ページ
+    //次のページ
     void NextPage(string str, bool con)
     {
         //名前を表示(名前がない場合はパネルを隠す)
@@ -120,13 +139,10 @@ public class AdvManager : MonoBehaviour
         this.mainText.text = "";
         this.titleText.text = "";
 
-        if (con)
-        {
-            ExecuteSymbol();
-        }
+        Continue(con);
     }
 
-    //改行
+    //次のテキスト
     void NextLine(string str, bool con)
     {
         char[] charA = str.ToCharArray();
@@ -174,6 +190,138 @@ public class AdvManager : MonoBehaviour
         StartCoroutine(FadeInText(titleText, con));
     }
 
+    //通常操作系の命令識別
+    void operation(string str, bool con)
+    {
+        string[] ope = str.Split(' ');
+        if (Equals(ope[0], "font"))
+        {
+            opeFont(ope, con);
+        }
+    }
+
+    //font命令
+    //%font <フォントサイズ>
+    void opeFont(string[] ope, bool con)
+    {
+        int size = int.Parse(ope[1]);
+        mainText.fontSize = size;
+
+        Continue(con);
+    }
+
+    //オブジェクト操作系の命令識別
+    void opeObj(string str, bool con)
+    {
+        string[] ope = str.Split(' ');
+        if (Equals(ope[0], "get"))
+        {
+            objStore(ope, con);
+        }
+        else if (Equals(ope[0], "pos"))
+        {
+            objPos(ope, con);
+        }
+        else if (Equals(ope[0], "active"))
+        {
+            objActive(ope, con);
+        }
+        else if (Equals(ope[0], "size"))
+        {
+            objSize(ope, con);
+        }
+        else if (Equals(ope[0], "fade"))
+        {
+            StartCoroutine(objFade(ope, con));
+        }
+        else if (Equals(ope[0], "order"))
+        {
+            objOrder(ope, con);
+        }
+       
+    }
+
+    //store命令
+    //!store リスト番号 対象
+    void objStore(string[] ope, bool con)
+    {
+        int num = int.Parse(ope[1]);
+        objList[num] = material.transform.Find(ope[2]).gameObject;
+
+        Continue(con);
+    }
+
+    //pos命令
+    //!pos リスト番号 <x> <y>
+    void objPos(string[] ope, bool con)
+    {
+        int num = int.Parse(ope[1]);
+        float x = float.Parse(ope[2]);
+        float y = float.Parse(ope[3]);
+        objList[num].transform.position = new Vector2(x, y);
+
+        Continue(con);
+    }
+
+    //active命令
+    //!active リスト番号 true/false
+    void objActive(string[] ope, bool con)
+    {
+        int num = int.Parse(ope[1]);
+        bool type = System.Convert.ToBoolean(ope[2]);
+        objList[num].SetActive(type);
+
+        Continue(con);
+    }
+
+    //size命令
+    //!size リスト番号 <size>
+    void objSize(string[] ope, bool con)
+    {
+        int num = int.Parse(ope[1]);
+        float size = float.Parse(ope[2]);
+        objList[num].transform.localScale = new Vector2(size, size);
+
+        Continue(con);
+    }
+
+    //fade命令
+    //!fade リスト番号 <目的値> <時間>
+    IEnumerator objFade(string[] ope, bool con)
+    {
+        int num = int.Parse(ope[1]);
+        float lastA = float.Parse(ope[2]);
+        SpriteRenderer sr = objList[num].GetComponent<SpriteRenderer>();
+        float nowA = sr.color.a;
+        float time = float.Parse(ope[3]);
+
+        if (time != 0)
+        {
+            float change = (lastA - nowA) / (20 * time);
+
+            while (time > 0)
+            {
+                nowA += change;
+                sr.color = new Color(1, 1, 1, nowA);
+                time -= 0.05f;
+                yield return new WaitForSeconds(0.05f);
+            }
+        }
+        sr.color = new Color(1, 1, 1, lastA);
+
+        Continue(con);
+    }
+
+    //order命令
+    //!order リスト番号 <番号>
+    void objOrder(string[] ope, bool con)
+    {
+        int num = int.Parse(ope[1]);
+        int order = int.Parse(ope[2]);
+        objList[num].GetComponent<SpriteRenderer>().sortingOrder = order;
+
+        Continue(con);
+    }
 
     //クリック時に動作
     void Click()
@@ -195,29 +343,15 @@ public class AdvManager : MonoBehaviour
             text.color = new Color(1, 1, 1, a);
             yield return new WaitForSeconds(0.05f);
         }
-        if (con)
-        {
-            ExecuteSymbol();
-        }
-    }
+        Continue(con);
+    }   
 
-    /*IEnumerator FadeIn(GameObject obj, float time, bool con)
+    //処理を続けるかどうか
+    void Continue(bool con)
     {
-        float spTime = time / 10;
-        float a = 0;
-
-        while (a <= 1)
-        {
-            a += 0.05f;
-            Debug.Log(a);
-            obj.color = new Color(1, 1, 1, a);
-            yield return new WaitForSeconds(0.05f);
-        }
-        
         if (con)
         {
             ExecuteSymbol();
         }
     }
-    */
 }
