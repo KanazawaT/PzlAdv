@@ -136,12 +136,12 @@ public class StageManager : MonoBehaviour
 		{
             if(this.terrain[i].x == x && this.terrain[i].y == y)
 			{
-                if(this.terrain[i].id == 2)
+                if(this.terrain[i].id == 10m)
 				{
                     return false;
 				}
 			}
-		}
+		}m
         //オブジェクトが上に乗ってなければ地形によって通行可否を判断
         if(x >= 0 && x < stageHeight && y >= 0 && y < stageHeight)
 		{
