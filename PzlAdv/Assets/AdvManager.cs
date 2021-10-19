@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
+//using UnityEngine.EventSystems;
 
 public class AdvManager : MonoBehaviour
 {
@@ -137,6 +137,7 @@ public class AdvManager : MonoBehaviour
         }
         //テキストをリセット
         this.mainText.text = "";
+        mainText.fontSize = 30;
         this.titleText.text = "";
 
         Continue(con);
@@ -194,14 +195,14 @@ public class AdvManager : MonoBehaviour
     void operation(string str, bool con)
     {
         string[] ope = str.Split(' ');
-        if (Equals(ope[0], "font"))
+        if (Equals(ope[0], "size"))
         {
             opeFont(ope, con);
         }
     }
 
-    //font命令
-    //%font <フォントサイズ>
+    //size命令
+    //%size <フォントサイズ>
     void opeFont(string[] ope, bool con)
     {
         int size = int.Parse(ope[1]);
@@ -226,9 +227,9 @@ public class AdvManager : MonoBehaviour
         {
             objActive(ope, con);
         }
-        else if (Equals(ope[0], "size"))
+        else if (Equals(ope[0], "scale"))
         {
-            objSize(ope, con);
+            objScale(ope, con);
         }
         else if (Equals(ope[0], "fade"))
         {
@@ -237,6 +238,10 @@ public class AdvManager : MonoBehaviour
         else if (Equals(ope[0], "order"))
         {
             objOrder(ope, con);
+        }
+        else if (Equals(ope[0], "wait"))
+        {
+            StartCoroutine(objWait(ope, con));
         }
        
     }
@@ -274,13 +279,13 @@ public class AdvManager : MonoBehaviour
         Continue(con);
     }
 
-    //size命令
-    //!size リスト番号 <size>
-    void objSize(string[] ope, bool con)
+    //scale命令
+    //!scale リスト番号 <size>
+    void objScale(string[] ope, bool con)
     {
         int num = int.Parse(ope[1]);
-        float size = float.Parse(ope[2]);
-        objList[num].transform.localScale = new Vector2(size, size);
+        float scale = float.Parse(ope[2]);
+        objList[num].transform.localScale = new Vector2(scale, scale);
 
         Continue(con);
     }
@@ -320,6 +325,15 @@ public class AdvManager : MonoBehaviour
         int order = int.Parse(ope[2]);
         objList[num].GetComponent<SpriteRenderer>().sortingOrder = order;
 
+        Continue(con);
+    }
+
+    //wait命令
+    //!wait <時間>
+    IEnumerator objWait(string[] ope, bool con)
+    {
+        float time = float.Parse(ope[1]);
+        yield return new WaitForSeconds(time);
         Continue(con);
     }
 
