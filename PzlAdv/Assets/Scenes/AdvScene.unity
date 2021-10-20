@@ -240,8 +240,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -375, y: 205}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: -362, y: 193.453}
+  m_SizeDelta: {x: 200, y: 49.137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &252656438
 MonoBehaviour:
@@ -340,7 +340,7 @@ RectTransform:
   m_GameObject: {fileID: 328246270}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.98, y: 1, z: 1}
   m_Children:
   - {fileID: 840052328}
   - {fileID: 1650365384}
@@ -349,8 +349,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 90}
-  m_SizeDelta: {x: 950, y: 170}
+  m_AnchoredPosition: {x: 1.75, y: 84.44299}
+  m_SizeDelta: {x: 946.43, y: 168.89}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &328246272
 MonoBehaviour:
@@ -681,7 +681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
+  m_ScaleFactor: 0.5
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
@@ -769,8 +769,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 170, y: 40}
+  m_AnchoredPosition: {x: 0, y: 2.5}
+  m_SizeDelta: {x: 170, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &972394586
 MonoBehaviour:
@@ -1249,6 +1249,7 @@ MonoBehaviour:
   namePanel: {fileID: 252656436}
   material: {fileID: 255961986}
   waitMark: {fileID: 1838010171}
+  isWaiting: 1
 --- !u!4 &1765759043
 Transform:
   m_ObjectHideFlags: 0
@@ -1450,7 +1451,7 @@ Transform:
   m_GameObject: {fileID: 2006314045}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children: []
   m_Father: {fileID: 255961987}
   m_RootOrder: 0
