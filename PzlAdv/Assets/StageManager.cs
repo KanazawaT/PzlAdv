@@ -141,7 +141,7 @@ public class StageManager : MonoBehaviour
                     return false;
 				}
 			}
-		}m
+		}
         //オブジェクトが上に乗ってなければ地形によって通行可否を判断
         if(x >= 0 && x < stageHeight && y >= 0 && y < stageHeight)
 		{
