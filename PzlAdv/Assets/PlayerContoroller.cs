@@ -16,6 +16,8 @@ public class PlayerContoroller : MonoBehaviour
     float heightProp = 0.5f;    //マスの縦の比率を設定する(1.0fで横と同じ、0.5fで半分)
     Animator anim;       //アニメ制御用
 
+    public GameObject stageManager; //StageManagerを呼び出す
+
     // Start is called before the first frame update
     void Start()
     {
@@ -120,6 +122,16 @@ public class PlayerContoroller : MonoBehaviour
 
         //移動先がどんなか確かめる
         int type = 0; //GetTargetID(); 今は仮で0をいれてます
+        
+        
+        //バグ
+        //GetComponentデバッグ
+        Debug.Log(newPos.x);
+
+        type = stageManager.GetComponent<StageManager>().GetTargetId(newPos.x,newPos.y);
+
+        //バグ
+
         switch (type)
         {
             case 2: //岩
