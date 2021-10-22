@@ -124,13 +124,11 @@ public class PlayerContoroller : MonoBehaviour
         int type = 0; //GetTargetID(); 今は仮で0をいれてます
         
         
-        //バグ
-        //GetComponentデバッグ
+        /*バグ
         Debug.Log(newPos.x);
 
         type = stageManager.GetComponent<StageManager>().GetTargetId(newPos.x,newPos.y);
-
-        //バグ
+        */
 
         switch (type)
         {
