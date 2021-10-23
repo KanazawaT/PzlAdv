@@ -68,15 +68,15 @@ public class StageManager : MonoBehaviour
 				{
                     case 0:
                         go = Instantiate(this.floorPrefab) as GameObject;
-                        go.transform.position = new Vector3(x, y/2.0f+0.25f, 10 + y);
+                        go.transform.position = new Vector3(x, y/2.0f-0.25f, 10 + y);
                         break;
                     case 1:
                         go = Instantiate(this.wallPrefab1) as GameObject;
-                        go.transform.position = new Vector3(x, y/2.0f + 0.25f, 10 + y);
+                        go.transform.position = new Vector3(x, y/2.0f - 0.25f, 10 + y);
                         break;
                     case 2:
                         go = Instantiate(this.wallPrefab2) as GameObject;
-                        go.transform.position = new Vector3(x, y/2.0f + 0.25f, 10 + y);
+                        go.transform.position = new Vector3(x, y/2.0f - 0.25f, 10 + y);
                         /*this.terrain[objectCount].gameObject = go;
                         this.terrain[objectCount].id = 2;
                         this.terrain[objectCount].x = x;
@@ -126,7 +126,7 @@ public class StageManager : MonoBehaviour
 
         }
 
-        return this.Board[x, y];
+        return this.Board[y, x];
 
 	}
     
@@ -145,7 +145,7 @@ public class StageManager : MonoBehaviour
         //オブジェクトが上に乗ってなければ地形によって通行可否を判断
         if(x >= 0 && x < stageHeight && y >= 0 && y < stageHeight)
 		{
-            if(this.Board[x,y] == 0)//通れる地形(何もない床)なら
+            if(this.Board[y,x] == 0)//通れる地形(何もない床)なら
 		    {
                 return true;
 			}

@@ -22,7 +22,7 @@ public class PlayerContoroller : MonoBehaviour
     void Start()
     {
         //初期位置を設定して配置
-        goalPosI = new Vector2Int(0, 0);    //ここで初期位置を設定
+        goalPosI = new Vector2Int(3, 3);    //ここで初期位置を設定
         goalPosF = ChangePosType(goalPosI);
         this.transform.position = goalPosF;
 
@@ -121,14 +121,15 @@ public class PlayerContoroller : MonoBehaviour
         Vector2Int newPos = goalPosI + DirectionToVector2(direction);
 
         //移動先がどんなか確かめる
-        int type = 0; //GetTargetID(); 今は仮で0をいれてます
+        //int type = 0; //GetTargetID(); 今は仮で0をいれてます
         
         
-        /*バグ
+        
         Debug.Log(newPos.x);
 
-        type = stageManager.GetComponent<StageManager>().GetTargetId(newPos.x,newPos.y);
-        */
+        int type = stageManager.GetComponent<StageManager>().GetTargetId(newPos.x,newPos.y);
+
+        Debug.Log("type=" + type);
 
         switch (type)
         {
