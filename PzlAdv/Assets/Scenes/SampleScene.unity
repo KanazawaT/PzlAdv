@@ -418,6 +418,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigid: {fileID: 1760482937}
   motion: {x: 0, y: 0}
+  stageManager: {fileID: 1421161947}
 --- !u!61 &1760482939
 BoxCollider2D:
   m_ObjectHideFlags: 0
