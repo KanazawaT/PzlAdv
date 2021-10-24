@@ -133,8 +133,14 @@ public class PlayerContoroller : MonoBehaviour
 
         switch (type)
         {
-            case 2: //岩
-                    //岩を押す処理
+            case 11:
+                //岩を押す処理
+                Debug.Log("iwa");
+                break;
+
+            case 2: 
+                //ここでboardに変数が使用されているので、岩の処理はcase: 11で実行
+                
             case 1: //壁
                 //移動開始に失敗
                 this.isMoving = false;

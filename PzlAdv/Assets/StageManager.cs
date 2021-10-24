@@ -52,7 +52,7 @@ public class StageManager : MonoBehaviour
             this.terrain[i] = new OverObject();
 		}
         //岩の座標は一つずつ代入
-        this.terrain[0].id = 1;
+        this.terrain[0].id = 11; //id(現状0～2)がboardの壁床で使われているので、idは11から始める
         this.terrain[0].x = 3;
         this.terrain[0].y = 4;
 
@@ -96,7 +96,7 @@ public class StageManager : MonoBehaviour
 			{
                 GameObject go;
 				switch(terrain[i].id){
-                    case 1:
+                    case 11:
                         go = Instantiate(this.stonePrefab) as GameObject;
                         go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
                         terrain[i].gameObject = go;
@@ -160,4 +160,29 @@ public class StageManager : MonoBehaviour
             return false;
 		}
 	}
+
+    public bool RockMove(Vector2Int direction, int index)
+    {
+        /* ここうまく動かなかったんでとりあえずコメントアウトしました
+        //岩を動かすメソッド
+        //第一引数はPlayerControllerのDirectionToVector2(direction)にすることを想定
+        //第二引数はGetTargetIdで得たid11以上のオブジェクトのid
+        Vector2Int rockGoal;
+        index -= 11;
+        if (index < 0)//idが11未満ならエラー
+        {
+            Debug.Log("エラー:StageManagerクラスのRockMoveの引数にしたidが" + id);
+            yield break;
+        }
+        rockGoal.x = this.terrain[index].x + direction.x;
+        rockGoal.y = this.terrain[index].y + direction.y;
+        if (CheckPassing(rockGoal.x, rockGoal.y, direction) == true)
+        {
+            this.terrian[index].x = rockGoal.x;
+            this.terrian[index].y = rockGoal.y;
+            return true;
+        }
+        */
+        return false;
+    }
 }
