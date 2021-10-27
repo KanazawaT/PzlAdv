@@ -133,7 +133,7 @@ public class PlayerContoroller : MonoBehaviour
 
         switch (type)
         {
-            case 11:
+            case 5:
                 //Šâ‚ğ‰Ÿ‚·ˆ—
                 if (stageManager.GetComponent<StageManager>().RockMove(DirectionToVector2(direction), type) == true)
                 {
