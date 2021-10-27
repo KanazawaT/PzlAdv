@@ -28,6 +28,8 @@ public class StageManager : MonoBehaviour
 
     int[,] Board;//ƒXƒe[ƒW‚Ì—lq‚ğ‹L˜^
     OverObject[] terrain;//Šâ‚È‚Ç‚Ì“®‚­ƒMƒ~ƒbƒN‚Í•Ê‚Å‹L˜^
+    Vector2Int rockGoalStep = new Vector2Int(); //Šâ‚Ì–Ú•W’n“_‚Ìƒ}ƒX–Ú
+    Vector3 rockGoalPrint = new Vector3(); //Šâ‚Ì–Ú•W’n“_‚ÌtransformÀ•W
 
     // Start is called before the first frame update
     void Start()
@@ -52,7 +54,7 @@ public class StageManager : MonoBehaviour
             this.terrain[i] = new OverObject();
         }
         //Šâ‚ÌÀ•W‚Íˆê‚Â‚¸‚Â‘ã“ü
-        this.terrain[0].id = 11; //id(Œ»ó0`2)‚ªboard‚Ì•Ç°‚Åg‚í‚ê‚Ä‚¢‚é‚Ì‚ÅAid‚Í11‚©‚çn‚ß‚é
+        this.terrain[0].id = 5; //id(Œ»ó0`2)‚ªboard‚Ì•Ç°‚Åg‚í‚ê‚Ä‚¢‚é‚Ì‚ÅAid‚Í5‚©‚çn‚ß‚é
         this.terrain[0].x = 3;
         this.terrain[0].y = 4;
 
@@ -94,9 +96,10 @@ public class StageManager : MonoBehaviour
         {
             if (terrain[i].id != 0)
             {
-                GameObject go;
+                
                 switch (terrain[i].id) {
-                    case 11:
+                    case 5:
+                        GameObject go;
                         go = Instantiate(this.stonePrefab) as GameObject;
                         go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
                         terrain[i].gameObject = go;
@@ -167,22 +170,33 @@ public class StageManager : MonoBehaviour
         //Šâ‚ğ“®‚©‚·ƒƒ\ƒbƒh
         //‘æˆêˆø”‚ÍPlayerController‚ÌDirectionToVector2(direction)‚É‚·‚é‚±‚Æ‚ğ‘z’è
         //‘æ“ñˆø”‚ÍGetTargetId‚Å“¾‚½id11ˆÈã‚ÌƒIƒuƒWƒFƒNƒg‚Ìid
-        Vector2Int rockGoal;
-        rockGoal = new Vector2Int();
+        
 
-        index -= 11;
+        index -= 5;
         if (index < 0)//id‚ª11–¢–‚È‚çƒGƒ‰[
         {
             Debug.Log("ƒGƒ‰[:StageManagerƒNƒ‰ƒX‚ÌRockMove‚Ìˆø”‚É‚µ‚½id‚ª" + index + 11);
             return false;
         }
 
-        rockGoal.x = this.terrain[index].x + direction.x;
-        rockGoal.y = this.terrain[index].y + direction.y;
+        rockGoalStep.x = this.terrain[index].x + direction.x;
+        rockGoalStep.y = this.terrain[index].y + direction.y;
+        Debug.Log("Step(" + rockGoalStep.x + "," + rockGoalStep.y + ")");
 
+<<<<<<< HEAD
         if (CheckPassing(rockGoal.x, rockGoal.y, direction) == true)
         {
             
+=======
+        rockGoalPrint.x = (float)rockGoalStep.x;
+        rockGoalPrint.y = (float)rockGoalStep.y/2;
+
+        if (CheckPassing(rockGoalStep.x, rockGoalStep.y, direction) == true)
+        {
+            terrain[index].gameObject.transform.position = rockGoalPrint;
+            this.terrain[index].x = rockGoalStep.x;
+            this.terrain[index].y = rockGoalStep.y;
+>>>>>>> ã¢ãˆã›ï½Œ
             return true;
         }
 
