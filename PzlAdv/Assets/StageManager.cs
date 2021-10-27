@@ -182,7 +182,7 @@ public class StageManager : MonoBehaviour
 
         if (CheckPassing(rockGoal.x, rockGoal.y, direction) == true)
         {
-
+            
             return true;
         }
 
