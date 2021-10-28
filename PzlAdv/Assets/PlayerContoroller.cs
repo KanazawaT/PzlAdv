@@ -133,8 +133,25 @@ public class PlayerContoroller : MonoBehaviour
 
         switch (type)
         {
-            case 2: //岩
+            case 5: //岩
                     //岩を押す処理
+                if (stageManager.GetComponent<StageManager>().RockMove(DirectionToVector2(direction), type) == true)
+                {
+                    Debug.Log("iwa");
+                    //移動開始に成功
+                    this.isMoving = true;
+                    anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
+                    //gxとgyを更新
+                    this.goalPosI = newPos;
+                    //goalPosを更新
+                    this.goalPosF = ChangePosType(goalPosI);
+                    //motionに値を反映、rigidも更新
+                    this.motion = DirectionToVector2(this.direction);
+                    this.motion *= this.speed;
+                    //this.motion.y *= heightProp;  //縦移動の際に移動速度を変える処理
+                    this.rigid.velocity = this.motion;
+                }
+                break;
             case 1: //壁
                 //移動開始に失敗
                 this.isMoving = false;
