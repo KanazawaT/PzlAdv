@@ -9,6 +9,7 @@ public class OverObject//動かせるギミック用
         this.x = 0;
         this.y = 0;
         this.id = 0;
+        //this.flag = 0;
 	}
     public GameObject gameObject;
     public int x, y,id;//GameObject型の座標系だとfloat型なのでint型を別で用意.あとそのオブジェクトのID
@@ -21,8 +22,12 @@ public class StageManager : MonoBehaviour
     public GameObject wallPrefab1;//WallPrefab;
     public GameObject wallPrefab2;
     public GameObject stonePrefab;//岩のプレハブ
+    public GameObject icePrefab;//氷のプレハブ
+    public GameObject holePrefab1;//穴のプレハブ
+    public GameObject buriedholePrefab1;//岩が埋まった穴のプレハブ
     
-    public const int maxObjNum = 1;//動かせるオブジェクトの最大数
+    
+    public const int maxObjNum = 2;//動かせるオブジェクトの最大数
     const int stageHeight = 10;
     const int stageWidth = 10;
 
@@ -30,6 +35,16 @@ public class StageManager : MonoBehaviour
     OverObject[] terrain;//岩などの動くギミックは別で記録
     Vector2Int rockGoalStep = new Vector2Int(); //岩の目標地点のマス目
     Vector3 rockGoalPrint = new Vector3(); //岩の目標地点のtransform座標
+    //int[] flag; //それぞれのidごとのフラグ(穴オブジェクトに岩が埋まっていれば1)
+    /* マップの番号
+    0.床
+    1,2.壁
+    3.氷
+    4.穴
+    5.岩1
+    6.岩が埋まった穴1
+    
+    */
 
     // Start is called before the first frame update
     void Start()
@@ -40,7 +55,7 @@ public class StageManager : MonoBehaviour
             { 1,1,1,1,1,1,1,1,1,1},
             { 1,0,0,0,0,1,0,0,0,1},
             { 1,0,0,0,0,1,0,2,2,1},
-            { 1,0,0,0,0,0,0,1,1,1},
+            { 1,0,3,0,0,0,0,1,1,1},
             { 1,0,0,0,0,0,0,0,0,1},
             { 1,0,0,0,2,0,0,0,0,1},
             { 1,0,0,0,1,0,0,0,0,1},
@@ -49,36 +64,44 @@ public class StageManager : MonoBehaviour
 
         };
         this.terrain = new OverObject[maxObjNum];//岩などのオブジェクトを増やすたびにmaxObjectNumを書き換えること
-        for(int i = 0;i < maxObjNum; i++)
-		{
+        for (int i = 0; i < maxObjNum; i++)
+        {
             this.terrain[i] = new OverObject();
-		}
+        }
+
+
+
         //岩の座標は一つずつ代入
         this.terrain[0].id = 5; //id(現状0～2)がboardの壁床で使われているので、idは5から始める
         this.terrain[0].x = 3;
         this.terrain[0].y = 4;
+
+        //穴の座標も一つずつ代入
+        this.terrain[1].id = 6;
+        this.terrain[1].x = 2;
+        this.terrain[1].y = 2;
 
         //ステージ生成
         for (int x = 0; x < stageWidth; x++)
         {
             for (int y = 0; y < stageHeight; y++)
             {
-                
+
                 GameObject go;
 
                 switch (this.Board[y, x])
-				{
+                {
                     case 0:
                         go = Instantiate(this.floorPrefab) as GameObject;
-                        go.transform.position = new Vector3(x, y/2.0f-0.25f, 10 + y);
+                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
                         break;
                     case 1:
                         go = Instantiate(this.wallPrefab1) as GameObject;
-                        go.transform.position = new Vector3(x, y/2.0f - 0.25f, 10 + y);
+                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
                         break;
                     case 2:
                         go = Instantiate(this.wallPrefab2) as GameObject;
-                        go.transform.position = new Vector3(x, y/2.0f - 0.25f, 10 + y);
+                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
                         /*this.terrain[objectCount].gameObject = go;
                         this.terrain[objectCount].id = 2;
                         this.terrain[objectCount].x = x;
@@ -87,26 +110,38 @@ public class StageManager : MonoBehaviour
                             
                         objectCount++;*/
                         break;
+                    case 3:
+                        go = Instantiate(this.icePrefab) as GameObject;
+                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
+                        break;
+
                 }
-               
+
             }
         }
+
         //岩などのオブジェクト生成
-        for(int i = 0;i < maxObjNum; i++)
-		{
+        for (int i = 0; i < maxObjNum; i++)
+        {
             if (terrain[i].id != 0)
-			{
+            {
                 GameObject go;
-				switch(terrain[i].id){
+                switch (terrain[i].id)
+                {
                     case 5:
                         go = Instantiate(this.stonePrefab) as GameObject;
                         go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
                         terrain[i].gameObject = go;
-                    break;
-				}
-			}
-		}
+                        break;
+                    case 6:
+                        go = Instantiate(this.holePrefab1) as GameObject;
+                        go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
+                        terrain[i].gameObject = go;
+                        break;
+                }
+            }
 
+        }
     }
 
     // Update is called once per frame
@@ -147,7 +182,7 @@ public class StageManager : MonoBehaviour
         //オブジェクトが上に乗ってなければ地形によって通行可否を判断
         if(x >= 0 && x < stageHeight && y >= 0 && y < stageHeight)
 		{
-            if(this.Board[y,x] == 0)//通れる地形(何もない床)なら
+            if(this.Board[y,x] == 0 || this.Board[y,x] == 3)//通れる地形(何もない床)なら
 		    {
                 return true;
 			}
@@ -185,12 +220,27 @@ public class StageManager : MonoBehaviour
         rockGoalPrint.x = (float)rockGoalStep.x;
         rockGoalPrint.y = (float)rockGoalStep.y / 2;
 
-        if (CheckPassing(rockGoalStep.x, rockGoalStep.y, direction) == true)
+        if (GetTargetId(rockGoalStep.x,rockGoalStep.y) == 6)
         {
-            terrain[index].gameObject.transform.position = rockGoalPrint;
-            this.terrain[index].x = rockGoalStep.x;
-            this.terrain[index].y = rockGoalStep.y;
-            return true;
+            //id6の穴を削除
+            this.terrain[index].x = -1;
+            this.terrain[index].y = -1;
+            Destroy(this.terrain[index].gameObject);
+
+            Destroy(this.terrain[1].gameObject);
+            this.terrain[1].gameObject = Instantiate(this.buriedholePrefab1) as GameObject;
+            
+
+        }
+        else 
+        {
+            if (CheckPassing(rockGoalStep.x, rockGoalStep.y, direction) == true)
+            {
+                terrain[index].gameObject.transform.position = rockGoalPrint;
+                this.terrain[index].x = rockGoalStep.x;
+                this.terrain[index].y = rockGoalStep.y;
+                return true;
+            }
         }
 
         return false;

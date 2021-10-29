@@ -365,6 +365,9 @@ MonoBehaviour:
   wallPrefab1: {fileID: 6075421415109018372, guid: c6c3bdfbe1863de4b82b41af948e6df9, type: 3}
   wallPrefab2: {fileID: 7586776783326810746, guid: 6ed3deab2b1880944883438d29397501, type: 3}
   stonePrefab: {fileID: 9077315436489953829, guid: 8581a1692c6fc7543bcbb1b99b43a39a, type: 3}
+  icePrefab: {fileID: 301121903623299329, guid: b4fffde16685b68488907db9b3b7c452, type: 3}
+  holePrefab1: {fileID: 1743608840742426111, guid: a400881fd1f071841b5ce7d8d4c4173d, type: 3}
+  buriedholePrefab1: {fileID: 5308300591687328382, guid: 6e83eebfbe3740d4197bc71f74f88193, type: 3}
 --- !u!4 &1421161949
 Transform:
   m_ObjectHideFlags: 0

@@ -152,6 +152,8 @@ public class PlayerContoroller : MonoBehaviour
                     this.rigid.velocity = this.motion;
                 }
                 break;
+            case 6:
+            case 2:
             case 1: //•Ç
                 //ˆÚ“®ŠJŽn‚ÉŽ¸”s
                 this.isMoving = false;
