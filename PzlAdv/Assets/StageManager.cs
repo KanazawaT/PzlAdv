@@ -22,26 +22,19 @@ public class StageManager : MonoBehaviour
     public GameObject wallPrefab1;//WallPrefab;
     public GameObject wallPrefab2;
     public GameObject stonePrefab;//Šâ‚ÌƒvƒŒƒnƒu
-<<<<<<< HEAD
-
-    public const int maxObjNum = 1;//“®‚©‚¹‚éƒIƒuƒWƒFƒNƒg‚ÌÅ‘å”
-=======
     public GameObject icePrefab;//•X‚ÌƒvƒŒƒnƒu
     public GameObject holePrefab1;//ŒŠ‚ÌƒvƒŒƒnƒu
     public GameObject buriedholePrefab1;//Šâ‚ª–„‚Ü‚Á‚½ŒŠ‚ÌƒvƒŒƒnƒu
     
     
     public const int maxObjNum = 2;//“®‚©‚¹‚éƒIƒuƒWƒFƒNƒg‚ÌÅ‘å”
->>>>>>> playerMove
     const int stageHeight = 10;
     const int stageWidth = 10;
 
     int[,] Board;//ƒXƒe[ƒW‚Ì—lq‚ğ‹L˜^
     OverObject[] terrain;//Šâ‚È‚Ç‚Ì“®‚­ƒMƒ~ƒbƒN‚Í•Ê‚Å‹L˜^
-<<<<<<< HEAD
     Vector2Int rockGoalStep = new Vector2Int(); //Šâ‚Ì–Ú•W’n“_‚Ìƒ}ƒX–Ú
     Vector3 rockGoalPrint = new Vector3(); //Šâ‚Ì–Ú•W’n“_‚ÌtransformÀ•W
-=======
     Vector2Int rockGoalStep = new Vector2Int(); //Šâ‚Ì–Ú•W’n“_‚Ìƒ}ƒX–Ú(Œ»İ‚ÍRockMoveŠÖ”‚Å‚µ‚©g‚Á‚Ä‚¢‚È‚¢‚ªAŠŠ‚ç‚©‚É“®‚©‚·‚Æ‚«‚ÉUpdate‚È‚Ç‚ÅŒÄ‚Ño‚·‚±‚Æ‚ğ‘z’è‚µ‚Ä‚±‚±‚ÅéŒ¾)
     Vector3 rockGoalPrint = new Vector3(); //Šâ‚Ì–Ú•W’n“_‚ÌtransformÀ•W()
     /* ƒ}ƒbƒv‚Ì”Ô†
@@ -53,7 +46,6 @@ public class StageManager : MonoBehaviour
     6.ŒŠ1
     ƒIƒuƒWƒFƒNƒg‚Ìid‚ÍA(terrain”z—ñ‚Ì“Y‚¦š+5)‚É‚È‚é‚æ‚¤‚É‚µ‚Ü‚µ‚½
     */
->>>>>>> playerMove
 
     // Start is called before the first frame update
     void Start()
@@ -77,12 +69,6 @@ public class StageManager : MonoBehaviour
         {
             this.terrain[i] = new OverObject();
         }
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> playerMove
         //Šâ‚ÌÀ•W‚Íˆê‚Â‚¸‚Â‘ã“ü
         this.terrain[0].id = 5; //id(Œ»ó0`2)‚ªboard‚Ì•Ç°‚Åg‚í‚ê‚Ä‚¢‚é‚Ì‚ÅAid‚Í5‚©‚çn‚ß‚é
         this.terrain[0].x = 3;
@@ -135,29 +121,19 @@ public class StageManager : MonoBehaviour
         //Šâ‚È‚Ç‚ÌƒIƒuƒWƒFƒNƒg¶¬
         for (int i = 0; i < maxObjNum; i++)
         {
-            if (terrain[i].id != 0)
-            {
-<<<<<<< HEAD
-                
-                switch (terrain[i].id) {
-                    case 5:
-                        GameObject go;
-=======
+            if (terrain[i].id != 0) {
                 GameObject go;
                 switch (terrain[i].id)
                 {
                     //V‚½‚Éid7‚ÌŠâ‚ğo‚µ‚½‚¢ê‡A‚±‚±‚Écase7: ‚ÆéŒ¾
                     case 5:
->>>>>>> playerMove
                         go = Instantiate(this.stonePrefab) as GameObject;
                         go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
                         terrain[i].gameObject = go;
                         break;
-<<<<<<< HEAD
                 }
             }
         }
-=======
                     //V‚½‚Éo‚µ‚½‚¢ŒŠ‚Ìid‚ğ‚±‚±‚Écase‚ÅéŒ¾
                     case 6:
                         go = Instantiate(this.holePrefab1) as GameObject;
@@ -166,7 +142,6 @@ public class StageManager : MonoBehaviour
                         break;
                 }
             }
->>>>>>> playerMove
 
         }
     }
@@ -192,40 +167,21 @@ public class StageManager : MonoBehaviour
 
         return this.Board[y, x];
 
-<<<<<<< HEAD
+
     }
 
-    public bool CheckPassing(int x, int y, Vector2 direction)//w’è‚µ‚½À•W‚Ì’Ês‰Â”Û‚ğ•Ô‚·
+
+    public bool CheckPassing(int x,int y,Vector2 direction)//w’è‚µ‚½À•W‚Ì’Ês‰Â”Û‚ğ•Ô‚·
     {
         for (int i = 0; i < maxObjNum; i++)//ã‚É“®‚©‚¹‚é‚à‚Ì‚ª’u‚¢‚Ä‚ ‚Á‚½‚ç‚»‚¿‚ç‚ğ—Dæ
         {
             if (this.terrain[i].x == x && this.terrain[i].y == y)
             {
-                if (this.terrain[i].id == 10m)
+                if (this.terrain[i].id == 5)
                 {
-                    return false;
-                }
-            }
-        }
-        //ƒIƒuƒWƒFƒNƒg‚ªã‚Éæ‚Á‚Ä‚È‚¯‚ê‚Î’nŒ`‚É‚æ‚Á‚Ä’Ês‰Â”Û‚ğ”»’f
-        if (x >= 0 && x < stageHeight && y >= 0 && y < stageHeight)
-        {
-            if (this.Board[y, x] == 0)//’Ê‚ê‚é’nŒ`(‰½‚à‚È‚¢°)‚È‚ç
-            {
-=======
-	}
-    
-    public bool CheckPassing(int x,int y,Vector2 direction)//w’è‚µ‚½À•W‚Ì’Ês‰Â”Û‚ğ•Ô‚·
-	{
-        for(int i = 0;i < maxObjNum; i++)//ã‚É“®‚©‚¹‚é‚à‚Ì‚ª’u‚¢‚Ä‚ ‚Á‚½‚ç‚»‚¿‚ç‚ğ—Dæ
-		{
-            if(this.terrain[i].x == x && this.terrain[i].y == y)
-			{
-                if(this.terrain[i].id == 5)
-				{
                     //Šâ‚È‚çfalse‚ğ•Ô‚·
                     return false;
-				}
+                }
                 if (this.terrain[i].id == 6)
                 {
                     //ŒŠ‚È‚ç‚±‚±‚Å”»’è
@@ -238,14 +194,13 @@ public class StageManager : MonoBehaviour
                         return false;
                     }
                 }
-			}
-		}
+            }
+        }
         //ƒIƒuƒWƒFƒNƒg‚ªã‚Éæ‚Á‚Ä‚È‚¯‚ê‚Î’nŒ`‚É‚æ‚Á‚Ä’Ês‰Â”Û‚ğ”»’f
-        if(x >= 0 && x < stageHeight && y >= 0 && y < stageHeight)
-		{
-            if(this.Board[y,x] == 0 || this.Board[y,x] == 3)//’Ê‚ê‚é’nŒ`(‰½‚à‚È‚¢°)‚È‚ç
-		    {
->>>>>>> playerMove
+        if (x >= 0 && x < stageHeight && y >= 0 && y < stageHeight)
+        {
+            if (this.Board[y, x] == 0 || this.Board[y, x] == 3)//’Ê‚ê‚é’nŒ`(‰½‚à‚È‚¢°)‚È‚ç
+            {
                 return true;
             }
             else//‚»‚¤‚Å‚È‚¢(•Ç)‚È‚ç
@@ -257,13 +212,8 @@ public class StageManager : MonoBehaviour
         else//”z—ñ‚Ì”ÍˆÍŠO‚È‚ç
         {
             return false;
-<<<<<<< HEAD
         }
     }
-=======
-		}
-	}
->>>>>>> playerMove
 
     public bool RockMove(Vector2Int direction, int index)
     {
@@ -271,11 +221,6 @@ public class StageManager : MonoBehaviour
         //Šâ‚ğ“®‚©‚·ƒƒ\ƒbƒh
         //‘æˆêˆø”‚ÍPlayerController‚ÌDirectionToVector2(direction)‚É‚·‚é‚±‚Æ‚ğ‘z’è
         //‘æ“ñˆø”‚ÍGetTargetId‚Å“¾‚½id11ˆÈã‚ÌƒIƒuƒWƒFƒNƒg‚Ìid
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> playerMove
 
         index -= 5;
         if (index < 0)//id‚ª11–¢–‚È‚çƒGƒ‰[
@@ -287,30 +232,25 @@ public class StageManager : MonoBehaviour
         rockGoalStep.x = this.terrain[index].x + direction.x;
         rockGoalStep.y = this.terrain[index].y + direction.y;
         Debug.Log("Step(" + rockGoalStep.x + "," + rockGoalStep.y + ")");
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-        if (CheckPassing(rockGoal.x, rockGoal.y, direction) == true)
+    if (CheckPassing(rockGoal.x, rockGoal.y, direction) == true)
         {
-            
-=======
-        rockGoalPrint.x = (float)rockGoalStep.x;
-        rockGoalPrint.y = (float)rockGoalStep.y/2;
 
-        if (CheckPassing(rockGoalStep.x, rockGoalStep.y, direction) == true)
-        {
-            terrain[index].gameObject.transform.position = rockGoalPrint;
-            this.terrain[index].x = rockGoalStep.x;
-            this.terrain[index].y = rockGoalStep.y;
->>>>>>> ã¢ãˆã›ï½Œ
-            return true;
+            rockGoalPrint.x = (float)rockGoalStep.x;
+            rockGoalPrint.y = (float)rockGoalStep.y / 2;
+
+            if (CheckPassing(rockGoalStep.x, rockGoalStep.y, direction) == true)
+            {
+                terrain[index].gameObject.transform.position = rockGoalPrint;
+                this.terrain[index].x = rockGoalStep.x;
+                this.terrain[index].y = rockGoalStep.y;
+
+                return true;
+            }
         }
-
 
 
         return false;
     }
-=======
         rockGoalPrint.x = (float)rockGoalStep.x;
         rockGoalPrint.y = (float)rockGoalStep.y / 2;
         int goalId = (GetTargetId(rockGoalStep.x, rockGoalStep.y));
@@ -351,5 +291,4 @@ public class StageManager : MonoBehaviour
         }
         return this.terrain[i].state;
     }
->>>>>>> playerMove
 }
