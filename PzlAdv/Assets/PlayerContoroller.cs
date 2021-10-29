@@ -133,6 +133,32 @@ public class PlayerContoroller : MonoBehaviour
 
         switch (type)
         {
+            case 6://穴
+                if (stageManager.GetComponent<StageManager>().ObjectState(type) == 1)
+                {
+                    //移動開始に成功
+                    this.isMoving = true;
+                    anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
+                                                        //gxとgyを更新
+                    this.goalPosI = newPos;
+                    //goalPosを更新
+                    this.goalPosF = ChangePosType(goalPosI);
+                    //motionに値を反映、rigidも更新
+                    this.motion = DirectionToVector2(this.direction);
+                    this.motion *= this.speed;
+                    //this.motion.y *= heightProp;  //縦移動の際に移動速度を変える処理
+                    this.rigid.velocity = this.motion;
+
+                }
+                else
+                {
+                    //移動開始に失敗
+                    this.isMoving = false;
+                    anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
+                                                     //失敗時の共通処理とかあればここに
+                }
+                break;
+
             case 5: //岩
                     //岩を押す処理
                 if (stageManager.GetComponent<StageManager>().RockMove(DirectionToVector2(direction), type) == true)
@@ -152,7 +178,7 @@ public class PlayerContoroller : MonoBehaviour
                     this.rigid.velocity = this.motion;
                 }
                 break;
-            case 6:
+            
             case 2:
             case 1: //壁
                 //移動開始に失敗

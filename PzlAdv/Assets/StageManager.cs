@@ -9,10 +9,10 @@ public class OverObject//動かせるギミック用
         this.x = 0;
         this.y = 0;
         this.id = 0;
-        //this.flag = 0;
+        this.state = 0;
 	}
     public GameObject gameObject;
-    public int x, y,id;//GameObject型の座標系だとfloat型なのでint型を別で用意.あとそのオブジェクトのID
+    public int x, y,id,state;//GameObject型の座標系だとfloat型なのでint型を別で用意.あとそのオブジェクトのID
 }
 
 public class StageManager : MonoBehaviour
@@ -33,17 +33,16 @@ public class StageManager : MonoBehaviour
 
     int[,] Board;//ステージの様子を記録
     OverObject[] terrain;//岩などの動くギミックは別で記録
-    Vector2Int rockGoalStep = new Vector2Int(); //岩の目標地点のマス目
-    Vector3 rockGoalPrint = new Vector3(); //岩の目標地点のtransform座標
-    //int[] flag; //それぞれのidごとのフラグ(穴オブジェクトに岩が埋まっていれば1)
+    Vector2Int rockGoalStep = new Vector2Int(); //岩の目標地点のマス目(現在はRockMove関数でしか使っていないが、滑らかに動かすときにUpdateなどで呼び出すことを想定してここで宣言)
+    Vector3 rockGoalPrint = new Vector3(); //岩の目標地点のtransform座標()
     /* マップの番号
     0.床
     1,2.壁
     3.氷
-    4.穴
+    4.未使用
     5.岩1
-    6.岩が埋まった穴1
-    
+    6.穴1
+    オブジェクトのidは、(terrain配列の添え字+5)になるようにしました
     */
 
     // Start is called before the first frame update
@@ -128,11 +127,13 @@ public class StageManager : MonoBehaviour
                 GameObject go;
                 switch (terrain[i].id)
                 {
+                    //新たにid7の岩を出したい場合、ここにcase7: と宣言
                     case 5:
                         go = Instantiate(this.stonePrefab) as GameObject;
                         go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
                         terrain[i].gameObject = go;
                         break;
+                    //新たに出したい穴のidをここにcaseで宣言
                     case 6:
                         go = Instantiate(this.holePrefab1) as GameObject;
                         go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
@@ -173,10 +174,23 @@ public class StageManager : MonoBehaviour
 		{
             if(this.terrain[i].x == x && this.terrain[i].y == y)
 			{
-                if(this.terrain[i].id == 10m)
+                if(this.terrain[i].id == 5)
 				{
+                    //岩ならfalseを返す
                     return false;
 				}
+                if (this.terrain[i].id == 6)
+                {
+                    //穴ならここで判定
+                    if (this.terrain[i].state == 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
 			}
 		}
         //オブジェクトが上に乗ってなければ地形によって通行可否を判断
@@ -219,17 +233,19 @@ public class StageManager : MonoBehaviour
 
         rockGoalPrint.x = (float)rockGoalStep.x;
         rockGoalPrint.y = (float)rockGoalStep.y / 2;
+        int goalId = (GetTargetId(rockGoalStep.x, rockGoalStep.y));
 
-        if (GetTargetId(rockGoalStep.x,rockGoalStep.y) == 6)
+        if  (goalId== 6)
         {
-            //id6の穴を削除
+            //穴を追加するときはこのif文の条件に追記
             this.terrain[index].x = -1;
             this.terrain[index].y = -1;
             Destroy(this.terrain[index].gameObject);
+            this.terrain[goalId-5].state = 1;
+            Destroy(this.terrain[goalId-5].gameObject);
+            this.terrain[goalId-5].gameObject = Instantiate(this.buriedholePrefab1) as GameObject;
+            terrain[goalId-5].gameObject.transform.position = new Vector3(terrain[goalId-5].x, terrain[goalId-5].y / 2.0f, terrain[goalId-5].y);
 
-            Destroy(this.terrain[1].gameObject);
-            this.terrain[1].gameObject = Instantiate(this.buriedholePrefab1) as GameObject;
-            
 
         }
         else 
@@ -244,5 +260,15 @@ public class StageManager : MonoBehaviour
         }
 
         return false;
+    }
+    public int ObjectState(int i)
+    {
+        i -= 5;
+        if (i < 0)//idが5未満ならエラー
+        {
+            Debug.Log("エラー:StageManagerクラスのRockMoveの引数にしたidが" + i + 5);
+            return i;
+        }
+        return this.terrain[i].state;
     }
 }
