@@ -133,8 +133,39 @@ public class PlayerContoroller : MonoBehaviour
 
         switch (type)
         {
+<<<<<<< HEAD
             case 5:
                 //岩を押す処理
+=======
+            case 6://穴
+                if (stageManager.GetComponent<StageManager>().ObjectState(type) == 1)
+                {
+                    //移動開始に成功
+                    this.isMoving = true;
+                    anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
+                                                        //gxとgyを更新
+                    this.goalPosI = newPos;
+                    //goalPosを更新
+                    this.goalPosF = ChangePosType(goalPosI);
+                    //motionに値を反映、rigidも更新
+                    this.motion = DirectionToVector2(this.direction);
+                    this.motion *= this.speed;
+                    //this.motion.y *= heightProp;  //縦移動の際に移動速度を変える処理
+                    this.rigid.velocity = this.motion;
+
+                }
+                else
+                {
+                    //移動開始に失敗
+                    this.isMoving = false;
+                    anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
+                                                     //失敗時の共通処理とかあればここに
+                }
+                break;
+
+            case 5: //岩
+                    //岩を押す処理
+>>>>>>> playerMove
                 if (stageManager.GetComponent<StageManager>().RockMove(DirectionToVector2(direction), type) == true)
                 {
                     Debug.Log("iwa");
@@ -152,10 +183,15 @@ public class PlayerContoroller : MonoBehaviour
                     this.rigid.velocity = this.motion;
                 }
                 break;
+<<<<<<< HEAD
 
             case 2: 
                 //ここでboardに変数が使用されているので、岩の処理はcase: 11で実行
                 
+=======
+            
+            case 2:
+>>>>>>> playerMove
             case 1: //壁
                 //移動開始に失敗
                 this.isMoving = false;
