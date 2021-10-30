@@ -183,11 +183,11 @@ public class StageManager : MonoBehaviour
         rockGoalStep.y = this.terrain[index].y + direction.y;
         Debug.Log("Step(" + rockGoalStep.x + "," + rockGoalStep.y + ")");
 
-<<<<<<< HEAD
+/*<<<<<<< HEAD
         if (CheckPassing(rockGoal.x, rockGoal.y, direction) == true)
         {
             
-=======
+=======*/
         rockGoalPrint.x = (float)rockGoalStep.x;
         rockGoalPrint.y = (float)rockGoalStep.y/2;
 
@@ -196,7 +196,7 @@ public class StageManager : MonoBehaviour
             terrain[index].gameObject.transform.position = rockGoalPrint;
             this.terrain[index].x = rockGoalStep.x;
             this.terrain[index].y = rockGoalStep.y;
->>>>>>> ぢえせｌ
+//>>>>>>> ぢえせ�E�E
             return true;
         }
 
