@@ -52,7 +52,7 @@ public class AdvManager : MonoBehaviour
     //テキストファイルから読み込み
     string Load(string name)
     {
-        TextAsset loadedText = Resources.Load<TextAsset>("Story/" + "test");
+        TextAsset loadedText = Resources.Load<TextAsset>("Story/" + "prologue");
         return loadedText.text.Replace("\r\n", "~").Replace("\r", "~");
     }
 
@@ -252,6 +252,10 @@ public class AdvManager : MonoBehaviour
         {
             ObjOrder(ope, con);
         }
+        else if (Equals(ope[0], "move"))
+        {
+            StartCoroutine(ObjMove(ope, con));
+        }
         
        
     }
@@ -264,7 +268,6 @@ public class AdvManager : MonoBehaviour
         //objList[num] = material.transform.Find(ope[2]).gameObject;
 
         SpriteRenderer sr = objList[num].GetComponent<SpriteRenderer>();
-        Debug.Log("AdvPic/" + ope[2]);
         sr.sprite = Resources.Load<Sprite>("AdvPic/" + ope[2]);
         Continue(con);
     }
@@ -342,10 +345,49 @@ public class AdvManager : MonoBehaviour
     }
 
     //move命令
-    //!move
-    void ObjMove (string[] ope, bool con)
+    //!move リスト番号 <向き> <距離> <時間>
+    IEnumerator ObjMove(string[] ope, bool con)
     {
+        int num = int.Parse(ope[1]);
+        Vector3 direction;
+        if (Equals(ope[2], "U"))
+        {
+            direction = Vector3.up;
+        }
+        else if (Equals(ope[2], "R"))
+        {
+            direction = Vector3.right;
+        }
+        else if (Equals(ope[2], "D"))
+        {
+            direction = Vector3.down;
+        }
+        else
+        {
+            direction = Vector3.left;
+        }
+        float distance = float.Parse(ope[3]);
+        Transform tf = objList[num].GetComponent<Transform>();
+        float time = float.Parse(ope[4]);
 
+        if (time != 0)
+        {
+            float change = distance / (20 * time);
+            Vector3 directionC = direction * change;
+
+            while (time > 0)
+            {
+                tf.position += directionC;
+                time -= 0.05f;
+                yield return new WaitForSeconds(0.05f);
+            }
+        }
+        else
+        {
+            tf.position += direction * distance;
+        }
+
+        Continue(con);
     }
 
     //クリック時に動作

@@ -5,7 +5,7 @@
 !active 0 true
 !order 0 3
 
-!pic 2 Aito/Normal
+!pic 2 Aito/Eee
 !pos 2 7 -9
 !scale 2 1.3
 !active 2 true
@@ -21,7 +21,8 @@
 !fade 0 1 1
 %wait 1
 
-!pic 2 Aito/Yokome
+!pic 2 Aito/Neko
+!move 2 L 5 1
 
 &ダン子
 |こんにちは。突然ですけど、パン、食べていきません？
