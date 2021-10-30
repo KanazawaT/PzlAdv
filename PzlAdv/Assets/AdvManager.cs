@@ -19,7 +19,9 @@ public class AdvManager : MonoBehaviour
     const float WAIT_BC = 0.03f;
 
     //オブジェクトのリスト
-    GameObject[] objList = new GameObject[10];
+    public GameObject[] objList = new GameObject[10];
+
+    public Sprite test;
 
     //ページと行のキュー
     Queue<string> pageQ = new Queue<string>();
@@ -50,14 +52,14 @@ public class AdvManager : MonoBehaviour
     //テキストファイルから読み込み
     string Load(string name)
     {
-        TextAsset loadedText = Resources.Load<TextAsset>("Story/" + "test");
-        return loadedText.text.Replace("\r\n", "/").Replace("\r", "/");
+        TextAsset loadedText = Resources.Load<TextAsset>("Story/" + "prologue");
+        return loadedText.text.Replace("\r\n", "~").Replace("\r", "~");
     }
 
     //テキストを命令ごとにキューに格納
     void SplitText(string loadedText)
     {
-        string[] splitText = loadedText.Split('/');
+        string[] splitText = loadedText.Split('~');
         this.pageQ.Clear();
         foreach (string s in splitText)
         {
@@ -111,12 +113,12 @@ public class AdvManager : MonoBehaviour
         }
         else if (Equals(sType, "%"))
         {
-            operation(sText, true);
+            Operation(sText, true);
         }
         else if (Equals(sType, "!"))
         {
             //オブジェ操作系
-            opeObj(sText, true);
+            OpeObj(sText, true);
         }
         
 
@@ -185,80 +187,94 @@ public class AdvManager : MonoBehaviour
     {
         NextPage("", false);
         titleText.color = new Color(1, 1, 1, 0);
-        //titleTextA.SetTrigger("fadeIn");
         this.titleText.text = str;
 
         StartCoroutine(FadeInText(titleText, con));
     }
 
     //通常操作系の命令識別
-    void operation(string str, bool con)
+    void Operation(string str, bool con)
     {
         string[] ope = str.Split(' ');
         if (Equals(ope[0], "size"))
         {
-            opeFont(ope, con);
+            OpeFont(ope, con);
+        }
+        else if (Equals(ope[0], "wait"))
+        {
+            StartCoroutine(OpeWait(ope, con));
         }
     }
 
     //size命令
     //%size <フォントサイズ>
-    void opeFont(string[] ope, bool con)
+    void OpeFont(string[] ope, bool con)
     {
         int size = int.Parse(ope[1]);
         mainText.fontSize = size;
+        Continue(con);
+    }
 
+    //wait命令
+    //%wait <時間>
+    IEnumerator OpeWait(string[] ope, bool con)
+    {
+        float time = float.Parse(ope[1]);
+        yield return new WaitForSeconds(time);
         Continue(con);
     }
 
     //オブジェクト操作系の命令識別
-    void opeObj(string str, bool con)
+    void OpeObj(string str, bool con)
     {
         string[] ope = str.Split(' ');
-        if (Equals(ope[0], "get"))
+        if (Equals(ope[0], "pic"))
         {
-            objStore(ope, con);
+            ObjPic(ope, con);
         }
         else if (Equals(ope[0], "pos"))
         {
-            objPos(ope, con);
+            ObjPos(ope, con);
         }
         else if (Equals(ope[0], "active"))
         {
-            objActive(ope, con);
+            ObjActive(ope, con);
         }
         else if (Equals(ope[0], "scale"))
         {
-            objScale(ope, con);
+            ObjScale(ope, con);
         }
         else if (Equals(ope[0], "fade"))
         {
-            StartCoroutine(objFade(ope, con));
+            StartCoroutine(ObjFade(ope, con));
         }
         else if (Equals(ope[0], "order"))
         {
-            objOrder(ope, con);
+            ObjOrder(ope, con);
         }
-        else if (Equals(ope[0], "wait"))
+        else if (Equals(ope[0], "move"))
         {
-            StartCoroutine(objWait(ope, con));
+            StartCoroutine(ObjMove(ope, con));
         }
+        
        
     }
 
-    //store命令
-    //!store リスト番号 対象
-    void objStore(string[] ope, bool con)
+    //pic命令
+    //!pic リスト番号 対象
+    void ObjPic(string[] ope, bool con)
     {
         int num = int.Parse(ope[1]);
-        objList[num] = material.transform.Find(ope[2]).gameObject;
+        //objList[num] = material.transform.Find(ope[2]).gameObject;
 
+        SpriteRenderer sr = objList[num].GetComponent<SpriteRenderer>();
+        sr.sprite = Resources.Load<Sprite>("AdvPic/" + ope[2]);
         Continue(con);
     }
 
     //pos命令
     //!pos リスト番号 <x> <y>
-    void objPos(string[] ope, bool con)
+    void ObjPos(string[] ope, bool con)
     {
         int num = int.Parse(ope[1]);
         float x = float.Parse(ope[2]);
@@ -270,7 +286,7 @@ public class AdvManager : MonoBehaviour
 
     //active命令
     //!active リスト番号 true/false
-    void objActive(string[] ope, bool con)
+    void ObjActive(string[] ope, bool con)
     {
         int num = int.Parse(ope[1]);
         bool type = System.Convert.ToBoolean(ope[2]);
@@ -281,7 +297,7 @@ public class AdvManager : MonoBehaviour
 
     //scale命令
     //!scale リスト番号 <size>
-    void objScale(string[] ope, bool con)
+    void ObjScale(string[] ope, bool con)
     {
         int num = int.Parse(ope[1]);
         float scale = float.Parse(ope[2]);
@@ -292,7 +308,7 @@ public class AdvManager : MonoBehaviour
 
     //fade命令
     //!fade リスト番号 <目的値> <時間>
-    IEnumerator objFade(string[] ope, bool con)
+    IEnumerator ObjFade(string[] ope, bool con)
     {
         int num = int.Parse(ope[1]);
         float lastA = float.Parse(ope[2]);
@@ -319,7 +335,7 @@ public class AdvManager : MonoBehaviour
 
     //order命令
     //!order リスト番号 <番号>
-    void objOrder(string[] ope, bool con)
+    void ObjOrder(string[] ope, bool con)
     {
         int num = int.Parse(ope[1]);
         int order = int.Parse(ope[2]);
@@ -328,12 +344,49 @@ public class AdvManager : MonoBehaviour
         Continue(con);
     }
 
-    //wait命令
-    //!wait <時間>
-    IEnumerator objWait(string[] ope, bool con)
+    //move命令
+    //!move リスト番号 <向き> <距離> <時間>
+    IEnumerator ObjMove(string[] ope, bool con)
     {
-        float time = float.Parse(ope[1]);
-        yield return new WaitForSeconds(time);
+        int num = int.Parse(ope[1]);
+        Vector3 direction;
+        if (Equals(ope[2], "U"))
+        {
+            direction = Vector3.up;
+        }
+        else if (Equals(ope[2], "R"))
+        {
+            direction = Vector3.right;
+        }
+        else if (Equals(ope[2], "D"))
+        {
+            direction = Vector3.down;
+        }
+        else
+        {
+            direction = Vector3.left;
+        }
+        float distance = float.Parse(ope[3]);
+        Transform tf = objList[num].GetComponent<Transform>();
+        float time = float.Parse(ope[4]);
+
+        if (time != 0)
+        {
+            float change = distance / (20 * time);
+            Vector3 directionC = direction * change;
+
+            while (time > 0)
+            {
+                tf.position += directionC;
+                time -= 0.05f;
+                yield return new WaitForSeconds(0.05f);
+            }
+        }
+        else
+        {
+            tf.position += direction * distance;
+        }
+
         Continue(con);
     }
 
