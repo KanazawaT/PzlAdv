@@ -36,13 +36,13 @@ public class AudioManager : MonoBehaviour
     }
 
     //Žw’è‚ÌSE‚ð—¬‚·
-    public void soundSE(int number)
+    public void SoundSE(int number)
     {
         seSource.PlayOneShot(seList[number]);
     }
 
     //Žw’è‚ÌBGM‚ð—¬‚·
-    public void soundBGM(int number)
+    public void SoundBGM(int number)
     {
         bgmSource.clip = bgmList[number];
         bgmSource.Play();
