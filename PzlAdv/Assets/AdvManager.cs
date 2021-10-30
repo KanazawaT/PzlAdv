@@ -139,7 +139,7 @@ public class AdvManager : MonoBehaviour
         }
         //テキストをリセット
         this.mainText.text = "";
-        mainText.fontSize = 30;
+        mainText.fontSize = 35;
         this.titleText.text = "";
 
         Continue(con);
