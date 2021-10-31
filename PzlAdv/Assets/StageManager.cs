@@ -214,12 +214,12 @@ public class StageManager : MonoBehaviour
 
     public bool RockMove(Vector2Int direction, int index)
     {
-
+        index -= 5;
         //岩を動かすメソッド
         //第一引数はPlayerControllerのDirectionToVector2(direction)にすることを想定
         //第二引数はGetTargetIdで得たid11以上のオブジェクトのid
 
-
+        /*
         index -= 5;
         if (index < 0)//idが11未満ならエラー
         {
@@ -253,13 +253,15 @@ public class StageManager : MonoBehaviour
             if (CheckPassing(rockGoalStep.x, rockGoalStep.y, direction) == true)
             {
                 terrain[index].gameObject.transform.position = rockGoalPrint;
+                
                 this.terrain[index].x = rockGoalStep.x;
                 this.terrain[index].y = rockGoalStep.y;
+                
                 return true;
             }
         }
-
-        return false;
+        */
+        return terrain[0].gameObject.GetComponent<StoneController>().StartMoving(direction);
     }
     public int ObjectState(int i)
     {
