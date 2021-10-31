@@ -17,10 +17,14 @@ public class PlayerContoroller : MonoBehaviour
     Animator anim;       //アニメ制御用
 
     public GameObject stageManager; //StageManagerを呼び出す
+    StageManager stageManagerS; //StageManagerのスクリプト
 
     // Start is called before the first frame update
     void Start()
     {
+
+        this.stageManagerS = this.stageManager.GetComponent<StageManager>();
+
         //初期位置を設定して配置
         goalPosI = new Vector2Int(3, 3);    //ここで初期位置を設定
         goalPosF = ChangePosType(goalPosI);
@@ -34,8 +38,8 @@ public class PlayerContoroller : MonoBehaviour
     void Update()
     {
 
-        //移動中ではない
-        if (this.isMoving == false)
+        //他に何も動いていない
+        if (stageManagerS.MovingCount(0) == 0)
         {
             //上下左右のキー入力を受けたら
             //isMovingをtrueにしてdirectionを更新
@@ -118,80 +122,62 @@ public class PlayerContoroller : MonoBehaviour
     void StartMoving()
     {
         //目標の移動先をnewPosに設定
+        //Debug.Log(newPos);
         Vector2Int newPos = goalPosI + DirectionToVector2(direction);
+        //Debug.Log(newPos);
 
         //移動先がどんなか確かめる
-        //int type = 0; //GetTargetID(); 今は仮で0をいれてます
-        
-        
-        
-        Debug.Log(newPos.x);
-
-        int type = stageManager.GetComponent<StageManager>().GetTargetId(newPos.x,newPos.y);
-
-        Debug.Log("type=" + type);
+        int type = stageManagerS.GetTargetId(newPos.x,newPos.y);
 
         switch (type)
         {
-            case 6://穴
-                if (stageManager.GetComponent<StageManager>().ObjectState(type) == 1)
-                {
-                    //移動開始に成功
-                    this.isMoving = true;
-                    anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
-                                                        //gxとgyを更新
-                    this.goalPosI = newPos;
-                    //goalPosを更新
-                    this.goalPosF = ChangePosType(goalPosI);
-                    //motionに値を反映、rigidも更新
-                    this.motion = DirectionToVector2(this.direction);
-                    this.motion *= this.speed;
-                    //this.motion.y *= heightProp;  //縦移動の際に移動速度を変える処理
-                    this.rigid.velocity = this.motion;
-
-                }
-                else
-                {
-                    //移動開始に失敗
-                    this.isMoving = false;
-                    anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
-                                                     //失敗時の共通処理とかあればここに
-                }
-                break;
-
-            case 5: //岩
-                    //岩を押す処理
-                if (stageManager.GetComponent<StageManager>().RockMove(DirectionToVector2(direction), type) == true)
-                {
-                    Debug.Log("iwa");
-                    //移動開始に成功
-                    this.isMoving = true;
-                    anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
-                    //gxとgyを更新
-                    this.goalPosI = newPos;
-                    //goalPosを更新
-                    this.goalPosF = ChangePosType(goalPosI);
-                    //motionに値を反映、rigidも更新
-                    this.motion = DirectionToVector2(this.direction);
-                    this.motion *= this.speed;
-                    //this.motion.y *= heightProp;  //縦移動の際に移動速度を変える処理
-                    this.rigid.velocity = this.motion;
-                }
-                break;
-            
-            case 2:
+            case 6: //穴
+            case 2: //壁
             case 1: //壁
                 //移動開始に失敗
-                this.isMoving = false;
-                anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
+                //anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
                 //失敗時の共通処理とかあればここに
                 break;
             default: //その他
                 //移動開始に成功
                 this.isMoving = true;
+                //movingCountを増やす
+                stageManagerS.MovingCount(1);
+                //スピードの調整
+                //岩だった場合
+                if (type == 5)
+                {
+                    if (this.stageManagerS.RockMove(newPos, this.direction))
+                    {
+                        //岩が押せる
+                        this.speed = 1.5f;
+                    }
+                    else
+                    {
+                        //岩が押せない
+                        break;
+                    }
+                }
+                //氷だった場合
+                else if (type == 3)
+                {
+                    this.speed = 4.0f;
+                }
+                else
+                {
+                    this.speed = 3.0f;
+                }
+                //goalPosを更新
+                if (type == 3)
+                {
+                    this.goalPosI = IceCheck(newPos, DirectionToVector2(this.direction));
+                }
+                else
+                {
+                    this.goalPosI = newPos;
+                }
+
                 anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
-                //gxとgyを更新
-                this.goalPosI = newPos;
                 //goalPosを更新
                 this.goalPosF = ChangePosType(goalPosI);
                 //motionに値を反映、rigidも更新
@@ -212,6 +198,8 @@ public class PlayerContoroller : MonoBehaviour
         this.rigid.velocity = motion;
 
         isMoving = false;
+        //movingCountをへらす
+        stageManagerS.MovingCount(-1);
         anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
     }
 
@@ -237,13 +225,22 @@ public class PlayerContoroller : MonoBehaviour
             result = true;
         }
 
-        //goalPosへの移動は完了しているが…
-        if (result)
-        {
-            //もし地面が氷なら移動継続
-            //result = false;
-        }
-
         return result;
+    }
+
+    //床が氷の場合はgoalPosを調整
+    Vector2Int IceCheck(Vector2Int pos, Vector2Int direction)
+    {
+        int type = this.stageManagerS.GetTargetId(pos.x + direction.x, pos.y + direction.y);
+
+        if (type == 3)
+        {
+            return IceCheck(pos + direction, direction);       
+        }
+        else if (type == 5 || type == 1 || type == 2 || type == 6)
+        {
+            return pos;
+        }
+        return pos + direction;
     }
 }

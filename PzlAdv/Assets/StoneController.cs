@@ -5,19 +5,20 @@ using UnityEngine;
 public class StoneController : MonoBehaviour
 {
     public Rigidbody2D rigid;
-    float speed = 3.0f; //移動スピード
+    float speed = 1.0f; //移動スピード
     int direction = 0; //向き(0:↑, 1:→, 2:↓, 3:←)
-    public Vector2 motion;   //移動のベクトル
+    Vector2 motion;   //移動のベクトル
     Vector2 goalPosF;    //移動で目指す実際の座標
     Vector2Int goalPosI;     //マス目上の移動先座標
     bool isMoving = false;  //移動中ならtrueそうでなければfalse
     float heightProp = 0.5f;    //マスの縦の比率を設定する(1.0fで横と同じ、0.5fで半分)
-    public GameObject stageManager; //StageManagerを呼び出す
+    StageManager stageManagerS; //StageManagerのスクリプト
+    int index; //この岩のterrain上での添字
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        stageManagerS = GameObject.Find("StageManager").GetComponent<StageManager>();
     }
 
     // Update is called once per frame
@@ -36,50 +37,44 @@ public class StoneController : MonoBehaviour
     }
 
     //移動を開始する処理
-    public bool StartMoving(Vector2Int d)
+    public bool StartMoving(Vector2Int pos, int direction, int index)
     {
+
         //目標の移動先をnewPosに設定
-        Vector2Int newPos = goalPosI + d;
+        this.direction = direction;
+        this.goalPosI = pos;
+        Vector2Int newPos = goalPosI + DirectionToVector2(direction);
 
         //移動先がどんなか確かめる
-        //int type = 0; //GetTargetID(); 今は仮で0をいれてます
-
-
-
-        Debug.Log(newPos.x);
-
-        int type = stageManager.GetComponent<StageManager>().GetTargetId(newPos.x, newPos.y);
-
-        Debug.Log("type=" + type);
+        int type = stageManagerS.GetTargetId(newPos.x, newPos.y);
 
         switch (type)
         {
-
-
-
-
             case 6: //穴
-                if (true)
+            case 0: //床
+            case 3: //氷の床
+                //移動開始に成功
+                this.isMoving = true;
+                //movingCountを増やす
+                stageManagerS.MovingCount(1);
+                //氷だった場合
+                if (type == 3)
                 {
-                    //移動開始に失敗
+                    this.speed = 3.0f;
                 }
                 else
                 {
-                    //移動開始に成功
+                    this.speed = 1.5f;
                 }
-                break;
-            case 2:
-            case 1: //壁
-                //移動開始に失敗
-                this.isMoving = false;
-                return false;
-                break;
-            default: //その他
-                //移動開始に成功
-                this.isMoving = true;
-                //anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
-                //gxとgyを更新
-                this.goalPosI = newPos;
+                //goalPosを更新
+                if (type == 3)
+                {
+                    this.goalPosI = IceCheck(newPos, DirectionToVector2(this.direction));                    
+                }
+                else
+                {
+                    this.goalPosI = newPos;
+                }
                 //goalPosを更新
                 this.goalPosF = ChangePosType(goalPosI);
                 //motionに値を反映、rigidも更新
@@ -89,8 +84,12 @@ public class StoneController : MonoBehaviour
                 this.rigid.velocity = this.motion;
                 return true;
                 break;
+            default: //その他
+                //移動開始失敗
+                this.isMoving = false;
+                return false;
+                break;
         }
-        return false;
     }
     //移動を終了する処理
     void FinishMoving()
@@ -100,7 +99,18 @@ public class StoneController : MonoBehaviour
         this.motion = Vector2.zero;
         this.rigid.velocity = motion;
 
+        //現在地が穴だったら
+        if (stageManagerS.GetTargetId(goalPosI.x, goalPosI.y) == 6)
+        {
+            stageManagerS.FallRock(goalPosI);
+            stageManagerS.DestroyRock(index);
+        }
+
+        stageManagerS.FinishRockMove(this.goalPosI, this.index);
+
         isMoving = false;
+        //movingCountをへらす
+        stageManagerS.MovingCount(-1);
     }
 
     //移動を終了すべきかチェック
@@ -124,14 +134,6 @@ public class StoneController : MonoBehaviour
         {
             result = true;
         }
-
-        //goalPosへの移動は完了しているが…
-        if (result)
-        {
-            //もし地面が氷なら移動継続
-            //result = false;
-        }
-
         return result;
     }
 
@@ -161,6 +163,22 @@ public class StoneController : MonoBehaviour
     Vector2 ChangePosType(Vector2Int vectorI)
     {
         return new Vector2(vectorI.x, vectorI.y * heightProp);
+    }
+
+    //床が氷の場合はgoalPosを調整
+    Vector2Int IceCheck(Vector2Int pos, Vector2Int direction)
+    {
+        int type = this.stageManagerS.GetTargetId(pos.x + direction.x, pos.y + direction.y);
+
+        if (type == 3)
+        {
+            return IceCheck(pos + direction, direction);
+        }
+        else if (type == 5 || type == 1 || type == 2 || type == 6)
+        {
+            return pos;
+        }
+        return pos + direction;
     }
 }
 
