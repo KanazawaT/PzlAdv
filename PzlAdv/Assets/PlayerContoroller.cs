@@ -14,6 +14,7 @@ public class PlayerContoroller : MonoBehaviour
     bool getKey;    //キー入力があったかの判定用
     bool isMoving = false;  //移動中ならtrueそうでなければfalse
     float heightProp = 0.5f;    //マスの縦の比率を設定する(1.0fで横と同じ、0.5fで半分)
+    int goalId;    //目指す座標のID
     Animator anim;       //アニメ制御用
 
     public GameObject stageManager; //StageManagerを呼び出す
@@ -127,9 +128,9 @@ public class PlayerContoroller : MonoBehaviour
         //Debug.Log(newPos);
 
         //移動先がどんなか確かめる
-        int type = stageManagerS.GetTargetId(newPos.x,newPos.y);
+        goalId = stageManagerS.GetTargetId(newPos.x,newPos.y);
 
-        switch (type)
+        switch (this.goalId)
         {
             case 6: //穴
             case 2: //壁
@@ -145,7 +146,7 @@ public class PlayerContoroller : MonoBehaviour
                 stageManagerS.MovingCount(1);
                 //スピードの調整
                 //岩だった場合
-                if (type == 5)
+                if (this.goalId == 5)
                 {
                     if (this.stageManagerS.RockMove(newPos, this.direction))
                     {
@@ -159,7 +160,7 @@ public class PlayerContoroller : MonoBehaviour
                     }
                 }
                 //氷だった場合
-                else if (type == 3)
+                else if (this.goalId == 3)
                 {
                     this.speed = 4.0f;
                 }
@@ -168,7 +169,7 @@ public class PlayerContoroller : MonoBehaviour
                     this.speed = 3.0f;
                 }
                 //goalPosを更新
-                if (type == 3)
+                if (this.goalId == 3)
                 {
                     this.goalPosI = IceCheck(newPos, DirectionToVector2(this.direction));
                 }
@@ -201,6 +202,9 @@ public class PlayerContoroller : MonoBehaviour
         //movingCountをへらす
         stageManagerS.MovingCount(-1);
         anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
+
+
+
     }
 
     //移動を終了すべきかチェック

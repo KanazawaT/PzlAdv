@@ -58,8 +58,8 @@ public class StageManager : MonoBehaviour
             { 1,1,1,1,1,1,1,1,1,1},
             { 1,0,0,0,0,1,0,0,0,1},
             { 1,0,0,0,0,1,0,2,2,1},
-            { 1,0,0,3,3,3,0,1,1,1},
-            { 1,0,0,0,0,0,0,0,0,1},
+            { 1,0,0,3,3,3,1,1,1,1},
+            { 1,0,0,3,3,3,1,0,0,1},
             { 1,0,0,0,2,0,0,0,0,1},
             { 1,0,0,0,1,0,0,0,0,1},
             { 1,2,2,2,1,2,2,2,2,1},
@@ -218,7 +218,6 @@ public class StageManager : MonoBehaviour
     //w’èÀ•W‚ÌŠâ‚ğ“®‚©‚·
     public bool RockMove(Vector2Int pos, int direction)
     {
-        int index = 0;
         bool result = false;
 
         for (int i = 0; i < maxObjNum; i++)

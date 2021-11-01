@@ -12,6 +12,7 @@ public class StoneController : MonoBehaviour
     Vector2Int goalPosI;     //マス目上の移動先座標
     bool isMoving = false;  //移動中ならtrueそうでなければfalse
     float heightProp = 0.5f;    //マスの縦の比率を設定する(1.0fで横と同じ、0.5fで半分)
+    int goalId;    //目指す座標のID
     StageManager stageManagerS; //StageManagerのスクリプト
     int index; //この岩のterrain上での添字
 
@@ -46,9 +47,9 @@ public class StoneController : MonoBehaviour
         Vector2Int newPos = goalPosI + DirectionToVector2(direction);
 
         //移動先がどんなか確かめる
-        int type = stageManagerS.GetTargetId(newPos.x, newPos.y);
+        this.goalId = stageManagerS.GetTargetId(newPos.x, newPos.y);
 
-        switch (type)
+        switch (this.goalId)
         {
             case 6: //穴
             case 0: //床
@@ -58,7 +59,7 @@ public class StoneController : MonoBehaviour
                 //movingCountを増やす
                 stageManagerS.MovingCount(1);
                 //氷だった場合
-                if (type == 3)
+                if (this.goalId == 3)
                 {
                     this.speed = 3.0f;
                 }
@@ -67,7 +68,7 @@ public class StoneController : MonoBehaviour
                     this.speed = 1.5f;
                 }
                 //goalPosを更新
-                if (type == 3)
+                if (goalId == 3)
                 {
                     this.goalPosI = IceCheck(newPos, DirectionToVector2(this.direction));                    
                 }
@@ -83,12 +84,10 @@ public class StoneController : MonoBehaviour
                 //this.motion.y *= heightProp;  //縦移動の際に移動速度を変える処理
                 this.rigid.velocity = this.motion;
                 return true;
-                break;
             default: //その他
                 //移動開始失敗
                 this.isMoving = false;
                 return false;
-                break;
         }
     }
     //移動を終了する処理
