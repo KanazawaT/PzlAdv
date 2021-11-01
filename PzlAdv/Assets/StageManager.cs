@@ -28,10 +28,10 @@ public class StageManager : MonoBehaviour
     public Sprite buriedhole1;
 
 
-    int movingCount = 0;//移動中のものを数える
+    public int movingCount = 0;//移動中のものを数える
 
     public const int maxObjNum = 2;//動かせるオブジェクトの最大数
-    const int stageHeight = 10;
+    const int stageHeight = 9;
     const int stageWidth = 10;
 
     int[,] Board;//ステージの様子を記録
@@ -52,16 +52,15 @@ public class StageManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.Board = new int[stageWidth, stageHeight]//マップをここで作る
+        this.Board = new int[stageHeight, stageWidth]//マップをここで作る
         {
             { 2,2,2,2,2,2,2,2,2,2},
             { 1,1,1,1,1,1,1,1,1,1},
             { 1,0,0,0,0,1,0,0,0,1},
-            { 1,0,0,0,0,1,0,2,2,1},
-            { 1,0,0,3,3,3,1,1,1,1},
-            { 1,0,0,3,3,3,1,0,0,1},
-            { 1,0,0,0,2,0,0,0,0,1},
-            { 1,0,0,0,1,0,0,0,0,1},
+            { 1,0,0,0,0,0,1,1,1,1},
+            { 1,0,0,3,0,0,1,0,0,1},
+            { 1,0,0,3,3,3,3,0,0,1},
+            { 1,3,0,0,1,0,0,0,0,1},
             { 1,2,2,2,1,2,2,2,2,1},
             { 1,1,1,1,1,1,1,1,1,1}
         };
@@ -91,7 +90,7 @@ public class StageManager : MonoBehaviour
 
                 GameObject go;
 
-                switch (this.Board[y, x])
+                switch (this.Board[stageHeight - y -1, x])
                 {
                     case 0:
                         go = Instantiate(this.floorPrefab) as GameObject;
@@ -167,10 +166,10 @@ public class StageManager : MonoBehaviour
 
         }
 
-        return this.Board[y, x];
+        return this.Board[stageHeight - y - 1, x];
 
 	}
-    
+
     public bool CheckPassing(int x,int y,Vector2 direction)//指定した座標の通行可否を返す
 	{
         for(int i = 0;i < maxObjNum; i++)//上に動かせるものが置いてあったらそちらを優先
@@ -224,7 +223,7 @@ public class StageManager : MonoBehaviour
         {
             if (this.terrain[i].x == pos.x && this.terrain[i].y == pos.y)
             {
-                result = this.terrain[i].gameObject.GetComponent<StoneController>().StartMoving(pos, direction, i);
+                result = this.terrain[i].gameObject.GetComponent<StoneController>().GetStartMoving(pos, direction, i);
                 break;
             }
         }
@@ -232,7 +231,7 @@ public class StageManager : MonoBehaviour
     }
 
     //岩の移動完了
-    public void FinishRockMove(Vector2Int pos, int index)
+    public void ChageTerrainPos(Vector2Int pos, int index)
     {
         terrain[index].x = pos.x;
         terrain[index].y = pos.y;
@@ -241,7 +240,6 @@ public class StageManager : MonoBehaviour
     //岩が落ちました
     public void FallRock(Vector2Int pos)
     {
-        Debug.Log("a");
         for (int i = 0; i < maxObjNum; i++)
         {
             if (this.terrain[i].x == pos.x && this.terrain[i].y == pos.y)
