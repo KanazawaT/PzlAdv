@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 //using UnityEngine.EventSystems;
 
 public class AdvManager : MonoBehaviour
@@ -12,6 +13,10 @@ public class AdvManager : MonoBehaviour
     public Text titleText;
     public GameObject namePanel;
     public GameObject material;
+    public GameObject fade;
+
+    const int DefaultFontSize = 35;
+
     //クリック待ち
     public Image waitMark;
 
@@ -21,17 +26,21 @@ public class AdvManager : MonoBehaviour
     //オブジェクトのリスト
     public GameObject[] objList = new GameObject[10];
 
-    public Sprite test;
-
     //ページと行のキュー
     Queue<string> pageQ = new Queue<string>();
     Queue<char> lineQ = new Queue<char>();
 
+    //何かしら待ち中
     public bool isWaiting = true;
+
+    //現在のお話
+    public int part;
 
     void Start()
     {
         SplitText(Load("a"));
+
+        part = TitleManager.stage;
 
         ExecuteSymbol();
     }
@@ -52,7 +61,7 @@ public class AdvManager : MonoBehaviour
     //テキストファイルから読み込み
     string Load(string name)
     {
-        TextAsset loadedText = Resources.Load<TextAsset>("Story/" + "prologue");
+        TextAsset loadedText = Resources.Load<TextAsset>("Story/Part" + this.part);
         return loadedText.text.Replace("\r\n", "~").Replace("\r", "~");
     }
 
@@ -139,7 +148,7 @@ public class AdvManager : MonoBehaviour
         }
         //テキストをリセット
         this.mainText.text = "";
-        mainText.fontSize = 35;
+        mainText.fontSize = DefaultFontSize;
         this.titleText.text = "";
 
         Continue(con);
@@ -204,6 +213,10 @@ public class AdvManager : MonoBehaviour
         {
             StartCoroutine(OpeWait(ope, con));
         }
+        else if (Equals(ope[0], "end"))
+        {
+            OpeEnd();
+        }
     }
 
     //size命令
@@ -222,6 +235,14 @@ public class AdvManager : MonoBehaviour
         float time = float.Parse(ope[1]);
         yield return new WaitForSeconds(time);
         Continue(con);
+    }
+
+    //end命令
+    //%end
+    void OpeEnd()
+    {
+        fade.SetActive(true);
+        StartCoroutine(SceneChange());
     }
 
     //オブジェクト操作系の命令識別
@@ -420,5 +441,21 @@ public class AdvManager : MonoBehaviour
         {
             ExecuteSymbol();
         }
+    }
+
+    //少し待ってシーンチェンジ
+    IEnumerator SceneChange()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        if (1 <= this.part && this.part <= 4)
+        {
+            SceneManager.LoadScene("Scenes/SampleScene");
+        }
+        else
+        {
+            SceneManager.LoadScene("Scenes/Title");
+        }
+        
     }
 }
