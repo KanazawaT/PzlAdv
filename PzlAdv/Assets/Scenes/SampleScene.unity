@@ -199,8 +199,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 405671804}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.4, y: 2.3, z: 99}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalPosition: {x: 4, y: 2.3, z: 99}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -282,7 +282,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.5, y: 2.3, z: -10}
+  m_LocalPosition: {x: 6, y: 2.3, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -718,6 +718,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1aae7d788940104aa14d0ccde0fdbc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 519420028}
   floorPrefab: {fileID: 5856601114535341375, guid: b88e9b20e0dcd4b4d9df630231470348, type: 3}
   wallPrefab1: {fileID: 6075421415109018372, guid: c6c3bdfbe1863de4b82b41af948e6df9, type: 3}
   wallPrefab2: {fileID: 7586776783326810746, guid: 6ed3deab2b1880944883438d29397501, type: 3}
