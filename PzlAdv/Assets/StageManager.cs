@@ -40,7 +40,7 @@ public class StageManager : MonoBehaviour
     int[,] Board;//ステージの様子を記録
     OverObject[] terrain;//岩などの動くギミックは別で記録
 
-    int stage = 3;//ステージ数を保存
+    int stage = 2;//ステージ数を保存
 
     //Vector2Int rockGoalStep = new Vector2Int(); //岩の目標地点のマス目(現在はRockMove関数でしか使っていないが、滑らかに動かすときにUpdateなどで呼び出すことを想定してここで宣言)
     //Vector3 rockGoalPrint = new Vector3(); //岩の目標地点のtransform座標()
@@ -195,30 +195,42 @@ public class StageManager : MonoBehaviour
         switch(stage)
         {
             case 1:
-                this.maxObjNum = 2;
+                this.maxObjNum = 4;
                 this.stageHeight = 10;
                 this.stageWidth = 10;
-                this.startPos = new Vector2Int(3, 3);
+                this.startPos = new Vector2Int(1, 5);
                 this.Board = new int[10, 10]//マップをここで作る
                 {
                     { 1,1,1,1,1,1,1,1,1,1},
-                    { 1,2,2,2,2,2,1,2,2,1},
-                    { 1,0,0,0,0,0,1,0,0,1},
-                    { 1,0,0,0,0,0,1,0,0,1},
-                    { 1,0,0,2,0,0,1,0,0,1},
-                    { 1,0,0,1,0,0,2,0,0,0},
+                    { 1,2,2,1,2,1,2,2,2,1},
+                    { 1,0,0,1,0,2,0,0,0,1},
                     { 1,0,0,1,0,0,0,0,0,1},
                     { 1,0,0,1,0,0,0,0,0,1},
-                    { 1,1,1,1,1,1,1,1,1,1},
+                    { 1,0,0,2,2,0,2,0,0,1},
+                    { 1,0,0,0,0,0,0,0,0,1},
+                    { 1,0,0,0,0,0,0,0,0,1},
+                    { 1,1,1,1,1,4,1,1,1,1},
                     { 2,2,2,2,2,2,2,2,2,2}
                 };               
                 break;
             case 2:
-                this.maxObjNum = 2;
+                this.maxObjNum = 6;
                 this.stageHeight = 10;
                 this.stageWidth = 10;
-                this.startPos = new Vector2Int(3, 3);
-                //this.Board = new int[9, 10]//マップをここで作る
+                this.startPos = new Vector2Int(8, 7);
+                this.Board = new int[10, 10]//マップをここで作る
+                {
+                    { 1,1,1,1,1,1,1,1,1,1},
+                    { 1,2,2,2,2,2,2,2,2,1},
+                    { 1,0,0,0,0,0,0,0,0,1},
+                    { 1,0,0,0,2,2,2,1,0,1},
+                    { 1,3,3,3,3,3,3,2,3,1},
+                    { 1,3,3,3,3,3,3,3,3,1},
+                    { 1,1,3,3,3,3,3,3,3,1},
+                    { 1,1,3,3,3,3,1,4,1,1},
+                    { 1,1,1,1,1,1,1,1,1,1},
+                    { 2,2,2,2,2,2,2,2,2,2}
+                };
                 break;
             case 3:
                 this.maxObjNum = 4;
@@ -279,10 +291,18 @@ public class StageManager : MonoBehaviour
         switch (stage)
         {
             case 1:
-                AddObj(5, 3, 4);
-                AddObj(6, 2, 3);
+                AddObj(5, 6, 6);
+                AddObj(5, 2, 5);
+                AddObj(6, 5, 5);
+                AddObj(6, 5, 4);
                 break;
             case 2:
+                AddObj(5, 8, 6);
+                AddObj(5, 3, 3);
+                AddObj(5, 3, 6);
+                AddObj(5, 2, 6);
+                AddObj(6, 4, 4);
+                AddObj(6, 6, 3);
                 break;
             case 3:
                 AddObj(5, 3, 5);
