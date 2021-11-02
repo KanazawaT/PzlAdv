@@ -253,7 +253,7 @@ public class StageManager : MonoBehaviour
                     { 1,0,0,0,0,2,3,3,3,1},
                     { 1,0,0,3,3,3,3,3,3,1},
                     { 1,3,3,3,3,3,3,3,3,4},
-                    { 1,0,0,3,3,3,3,3,3,1},
+                    { 1,3,3,3,3,3,3,3,3,1},
                     { 1,0,0,0,3,3,3,3,3,1},
                     { 1,0,0,0,3,3,3,3,3,1},
                     { 1,0,0,0,3,3,3,3,3,1},
@@ -322,7 +322,7 @@ public class StageManager : MonoBehaviour
             case 3:
                 AddObj(5, 3, 5);
                 AddObj(5, 7, 3);
-                AddObj(6, 8, 4);
+                AddObj(6, 8, 5);
                 AddObj(6, 1, 4);
                 break;
             case 4:
