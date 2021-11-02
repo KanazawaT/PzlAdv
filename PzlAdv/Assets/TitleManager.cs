@@ -15,6 +15,7 @@ public class TitleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Screen.SetResolution(737, 415, false, 60);
         if (stage == -1)
         {
             title.SetActive(true);
