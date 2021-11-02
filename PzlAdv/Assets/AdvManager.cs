@@ -238,7 +238,7 @@ public class AdvManager : MonoBehaviour
 
     //end–½—ß
     //%end
-    void OpeEnd()
+    public void OpeEnd()
     {
         fade.SetActive(true);
         StartCoroutine(SceneChange());

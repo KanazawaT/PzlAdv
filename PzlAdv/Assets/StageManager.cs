@@ -18,6 +18,8 @@ public class OverObject//動かせるギミック用
 public class StageManager : MonoBehaviour
 {
 
+    public GameObject cam; //カメラ
+
     public GameObject floorPrefab;//床
     public GameObject wallPrefab1;//WallPrefab;
     public GameObject wallPrefab2;
@@ -65,6 +67,9 @@ public class StageManager : MonoBehaviour
         SetTerrainInf(this.stage);
         GenerateStage();
         playerCS.SetPos(this.startPos);
+
+        cam.transform.position = new Vector3(this.stageWidth / 2, this.stageHeight / 4, -10);
+
     }
 
     // Update is called once per frame
