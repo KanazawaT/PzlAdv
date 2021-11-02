@@ -433,7 +433,7 @@ public class StageManager : MonoBehaviour
     }
 
     //ステージをリセットする
-    void ResetStage()
+    public void ResetStage()
     {
         //オブジェをすべて削除
         for (int i = 0; i < this.maxObjNum; i++)
