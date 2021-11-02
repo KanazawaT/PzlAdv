@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class OverObject//動かせるギミック用
 {
@@ -29,6 +31,9 @@ public class StageManager : MonoBehaviour
     public GameObject buriedholePrefab1;//岩が埋まった穴のプレハブ
     public GameObject goalPrefab;//ゴールのプレハブ
     public Sprite buriedhole1;//岩の埋まった穴の画像
+
+    public GameObject fade; //フェード用
+    public Text cText; //クリア表示
 
     PlayerContoroller playerCS; //PlayerControllerのスクリプト
 
@@ -450,6 +455,23 @@ public class StageManager : MonoBehaviour
         playerCS.ResetDirection();
         //movingCountのリセット
         this.movingCount = 0;
+    }
+
+
+    //ステージクリア
+    public void Clear()
+    {
+        StartCoroutine(SceneChange());
+    }
+
+    IEnumerator SceneChange()
+    {
+        yield return new WaitForSeconds(0.5f);
+        cText.text = "ステージクリア";
+        yield return new WaitForSeconds(0.5f);
+        fade.SetActive(true);
+        yield return new WaitForSeconds(2.0f);
+        SceneManager.LoadScene("Scenes/Title");
     }
 
 }
