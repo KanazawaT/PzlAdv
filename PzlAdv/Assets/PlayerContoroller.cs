@@ -6,7 +6,8 @@ public class PlayerContoroller : MonoBehaviour
 {
     //なんか色々と初期設定
     public Rigidbody2D rigid;
-    float speed = 3.0f; //移動スピード
+    const float DefaultSpeed = 3.0f;
+    float speed = DefaultSpeed; //移動スピード
     int direction = 0; //向き(0:↑, 1:→, 2:↓, 3:←)
     public Vector2 motion;   //移動のベクトル
     Vector2 goalPosF;    //移動で目指す実際の座標
@@ -14,17 +15,17 @@ public class PlayerContoroller : MonoBehaviour
     bool getKey;    //キー入力があったかの判定用
     bool isMoving = false;  //移動中ならtrueそうでなければfalse
     float heightProp = 0.5f;    //マスの縦の比率を設定する(1.0fで横と同じ、0.5fで半分)
+    bool withRock = false; //岩と移動してるか
     Animator anim;       //アニメ制御用
 
     public GameObject stageManager; //StageManagerを呼び出す
+    StageManager stageManagerS; //StageManagerのスクリプト
 
     // Start is called before the first frame update
     void Start()
     {
-        //初期位置を設定して配置
-        goalPosI = new Vector2Int(3, 3);    //ここで初期位置を設定
-        goalPosF = ChangePosType(goalPosI);
-        this.transform.position = goalPosF;
+
+        this.stageManagerS = this.stageManager.GetComponent<StageManager>();
 
         this.anim = GetComponent<Animator>();   //アニメ制御用
     }
@@ -34,8 +35,8 @@ public class PlayerContoroller : MonoBehaviour
     void Update()
     {
 
-        //移動中ではない
-        if (this.isMoving == false)
+        //他に何も動いていない
+        if (stageManagerS.MovingCount(0) == 0)
         {
             //上下左右のキー入力を受けたら
             //isMovingをtrueにしてdirectionを更新
@@ -115,67 +116,80 @@ public class PlayerContoroller : MonoBehaviour
     }
 
     //移動を開始する処理
-    void StartMoving()
+    bool StartMoving()
     {
         //目標の移動先をnewPosに設定
-        Vector2Int newPos = goalPosI + DirectionToVector2(direction);
+        //Debug.Log(newPos);
+        Vector2Int newPos = this.goalPosI + DirectionToVector2(this.direction);
+        //Debug.Log(newPos);
 
         //移動先がどんなか確かめる
-        //int type = 0; //GetTargetID(); 今は仮で0をいれてます
-        
-        
-        
-        Debug.Log(newPos.x);
+        int id = stageManagerS.GetTargetId(newPos.x,newPos.y);
 
-        int type = stageManager.GetComponent<StageManager>().GetTargetId(newPos.x,newPos.y);
-
-        Debug.Log("type=" + type);
-
-        switch (type)
+        switch (id)
         {
-            case 5:
-                //岩を押す処理
-                if (stageManager.GetComponent<StageManager>().RockMove(DirectionToVector2(direction), type) == true)
-                {
-                    Debug.Log("iwa");
-                    //移動開始に成功
-                    this.isMoving = true;
-                    anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
-                    //gxとgyを更新
-                    this.goalPosI = newPos;
-                    //goalPosを更新
-                    this.goalPosF = ChangePosType(goalPosI);
-                    //motionに値を反映、rigidも更新
-                    this.motion = DirectionToVector2(this.direction);
-                    this.motion *= this.speed;
-                    //this.motion.y *= heightProp;  //縦移動の際に移動速度を変える処理
-                    this.rigid.velocity = this.motion;
-                }
-                break;
-
-            case 2: 
-                //ここでboardに変数が使用されているので、岩の処理はcase: 11で実行
-                
+            case 6: //穴
+            case 2: //壁
             case 1: //壁
-                //移動開始に失敗
-                this.isMoving = false;
-                anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
                 //失敗時の共通処理とかあればここに
-                break;
+                return false;
             default: //その他
-                //移動開始に成功
-                this.isMoving = true;
-                anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
-                //gxとgyを更新
-                this.goalPosI = newPos;
+                     ////移動開始に成功
+                     //スピードの調整
+                     //岩だった場合
+                if (id == 5)
+                {
+                    if (isMoving == false)
+                    {
+                        if (this.stageManagerS.RockMove(newPos, this.direction))
+                        {
+                            //岩が押せる
+                            this.withRock = true;
+                            this.speed = 1.0f;
+                        }
+                        else
+                        {
+                            //岩が押せない
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        //移動開始時じゃないと岩は押せない
+                        return false;
+                    }
+                }                
+                else
+                {                   
+                    if (UnderIce(goalPosI))
+                    {
+                        this.speed = 4.0f;
+                    }
+                    else
+                    {
+                        this.speed = 3.0f;
+                    }
+                }
+
+                //移動継続時には実行しない
+                if (isMoving == false)
+                {
+                    this.isMoving = true;
+                    //movingCountを増やす
+                    stageManagerS.MovingCount(1);
+                    anim.SetFloat("speed", 1.0f);       //移動始めたらアニメーションも動く
+                }
+                
+                this.isMoving = true;                  
                 //goalPosを更新
+                this.goalPosI = newPos;
                 this.goalPosF = ChangePosType(goalPosI);
-                //motionに値を反映、rigidも更新
-                this.motion = DirectionToVector2(this.direction);
-                this.motion *= this.speed;
                 //this.motion.y *= heightProp;  //縦移動の際に移動速度を変える処理
-                this.rigid.velocity = this.motion;
-                break;
+                this.motion = DirectionToVector2(this.direction);
+                this.motion *= speed;
+                //motionに値を反映、rigidも更新
+                this.rigid.velocity = this.motion;               
+                return true;
         }
     }
 
@@ -184,11 +198,12 @@ public class PlayerContoroller : MonoBehaviour
     {
         this.transform.position = this.goalPosF;
         this.transform.Translate(0, 0, this.transform.position.y*2 - this.transform.position.z);//z座標をy座標に
-        this.motion = Vector2.zero;
-        this.rigid.velocity = motion;
 
-        isMoving = false;
-        anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
+        Reset();
+
+        //movingCountをへらす
+        stageManagerS.MovingCount(-1);
+
     }
 
     //移動を終了すべきかチェック
@@ -213,13 +228,48 @@ public class PlayerContoroller : MonoBehaviour
             result = true;
         }
 
-        //goalPosへの移動は完了しているが…
+        //到着したけど床が氷だった場合
         if (result)
         {
-            //もし地面が氷なら移動継続
-            //result = false;
+            if (UnderIce(goalPosI) && !withRock)
+            {
+                return !StartMoving();
+            }
         }
 
         return result;
+    }
+
+    //氷の上に乗ってるかどうか
+    bool UnderIce(Vector2Int pos)
+    {
+        return this.stageManagerS.GetTargetId(pos.x, pos.y) == 3;
+    }
+
+    //座標をセット
+    public void SetPos(Vector2Int pos)
+    {
+        this.goalPosI = new Vector2Int(pos.x, pos.y);
+        this.goalPosF = ChangePosType(goalPosI);
+        this.transform.position = this.goalPosF;
+        this.transform.Translate(0, 0, this.transform.position.y * 2 - this.transform.position.z);//z座標をy座標に
+    }
+
+    //座標系と向き以外をリセット
+    public void Reset()
+    {
+        this.isMoving = false;
+        this.withRock = false;
+        this.speed = DefaultSpeed;
+        this.motion = Vector2.zero;
+        this.rigid.velocity = motion;
+        anim.SetFloat("speed", 0.0f);
+    }
+
+    //向きをリセット
+    public void ResetDirection()
+    {
+        this.direction = 0;
+        anim.SetInteger("direction", 0);
     }
 }
