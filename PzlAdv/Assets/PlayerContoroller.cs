@@ -25,6 +25,7 @@ public class PlayerContoroller : MonoBehaviour
     void Start()
     {
 
+
         this.stageManagerS = this.stageManager.GetComponent<StageManager>();
 
         this.anim = GetComponent<Animator>();   //アニメ制御用
@@ -34,7 +35,6 @@ public class PlayerContoroller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         //他に何も動いていない
         if (stageManagerS.MovingCount(0) == 0)
         {
@@ -200,6 +200,13 @@ public class PlayerContoroller : MonoBehaviour
         this.transform.Translate(0, 0, this.transform.position.y*2 - this.transform.position.z);//z座標をy座標に
 
         Reset();
+
+        //ゴールしていたら
+        if (stageManagerS.GetTargetId(goalPosI.x, goalPosI.y) == 4)
+        {
+            stageManagerS.MovingCount(99);
+            stageManagerS.Clear();
+        }
 
         //movingCountをへらす
         stageManagerS.MovingCount(-1);
