@@ -254,7 +254,7 @@ public class StageManager : MonoBehaviour
                 };
                 break;
             case 4:
-                this.maxObjNum = 2;
+                this.maxObjNum = 12;
                 this.stageHeight = 15;
                 this.stageWidth = 15;
                 this.startPos = new Vector2Int(3, 2);
@@ -317,8 +317,18 @@ public class StageManager : MonoBehaviour
                 AddObj(6, 1, 4);
                 break;
             case 4:
-                AddObj(5, 3, 7);
-                AddObj(6, 5, 5);               
+                AddObj(5, 4, 4);
+                AddObj(5, 8, 3);
+                AddObj(5, 10, 5);
+                AddObj(5, 12, 3);
+                AddObj(5, 12, 10);
+                AddObj(6, 2, 2);
+                AddObj(6, 4, 2);
+                AddObj(6, 5, 4);
+                AddObj(6, 6, 4);
+                AddObj(6, 10, 2);
+                AddObj(6, 10, 4);
+                AddObj(6, 10, 8);
                 break;
 
         }
