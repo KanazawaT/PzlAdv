@@ -38,9 +38,8 @@ public class AdvManager : MonoBehaviour
 
     void Start()
     {
-        SplitText(Load("a"));
-
         part = TitleManager.stage;
+        SplitText(Load());       
 
         ExecuteSymbol();
     }
@@ -59,7 +58,7 @@ public class AdvManager : MonoBehaviour
     }
 
     //テキストファイルから読み込み
-    string Load(string name)
+    string Load()
     {
         TextAsset loadedText = Resources.Load<TextAsset>("Story/Part" + this.part);
         return loadedText.text.Replace("\r\n", "~").Replace("\r", "~");
@@ -87,7 +86,7 @@ public class AdvManager : MonoBehaviour
         {
 
             //終了処理
-            Debug.Log("END");
+            OpeEnd();
             return;
         }
 

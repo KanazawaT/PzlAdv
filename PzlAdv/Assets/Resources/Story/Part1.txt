@@ -1,0 +1,97 @@
+&
+
+!pic 0 School
+!scale 0 0.9
+!pos 0 0 2
+!active 0 true
+!order 0 0
+
+!pic 1 Aito/Tyoiiya
+!pos 1 5 -8
+!scale 1 1.3
+!order 1 3
+!active 1 true
+
+!pic 2 Danko/Bisyou
+!pos 2 -6.5 -6.5
+!scale 2 1
+!order 2 3
+!active 2 true
+
+%wait 0.5
+
+&少女
+|では、さっそく中へ入ってみましょう
++
+
+&青年
+|ぐぬぬ、仕方がない。
+|扉が開かれた以上、後には引けないってもんだ。
++
+
+!pic 1 Aito/Oogoe
+&青年
+|よし、行くぞ！
++
+
+&
+
+!pic 3 Dungeon
+!scale 3 1.1
+!pos 3 0 -2
+!order 3 1
+!fade 3 0 0
+
+!active 3 true
+!fade 3 1 2
+
+%wait 1
+
+!pic 1 Aito/Yayaiya
+&青年
+|なにこの、無機質な壁に囲まれた空間は。
+|学校っていう雰囲気じゃなくない？
++
+
+!pic 2 Danko/Ikari
+&少女
+|なんですか、その言い草は失礼ですよ！
+|ちょっとダンジョン化してるだけじゃないですか！
++
+
+!pic 1 Aito/Wakaranai
+&青年
+|…、は？
++
+
+!pic 2 Danko/Egao
+&少女
+|オブジェを押したり、それを穴に落としたり、氷の床をエレガントに滑ったりしながらゴールを目指すんです。
+|どうですか、楽しそうじゃないですか？
++
+
+&青年
+|やっぱり帰ってもいい？
++
+
+!pic 2 Danko/Ikari
+&少女
+|ええー。
+|前言撤回を重ねるとか、ちょー格好悪いと思わないんですか？
++
+
+!pic 1 Aito/Tyoiiya
+&青年
+|た、たしかに、格好悪いのは嫌だな。
+|やっぱり、格好良さは大事にして生きていたいしな。
++
+
+!pic 1 Aito/Egao
+&青年
+|ダンジョン攻略、頑張るか！
++
+
+!pic 2 Danko/Odoroki
+&少女
+|この人、不良にパシられてる立場なの忘れてません？
++
