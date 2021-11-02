@@ -368,7 +368,9 @@ MonoBehaviour:
   icePrefab: {fileID: 301121903623299329, guid: b4fffde16685b68488907db9b3b7c452, type: 3}
   holePrefab1: {fileID: 1743608840742426111, guid: a400881fd1f071841b5ce7d8d4c4173d, type: 3}
   buriedholePrefab1: {fileID: 5308300591687328382, guid: 6e83eebfbe3740d4197bc71f74f88193, type: 3}
+  goalPrefab: {fileID: 6963783400948999340, guid: f2f4726343f81af438280335627088f8, type: 3}
   buriedhole1: {fileID: 6001087268783240862, guid: 6e24c92bab081964083dabe91a9aec18, type: 3}
+  movingCount: 0
 --- !u!4 &1421161949
 Transform:
   m_ObjectHideFlags: 0

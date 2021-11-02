@@ -25,14 +25,17 @@ public class StageManager : MonoBehaviour
     public GameObject icePrefab;//氷のプレハブ
     public GameObject holePrefab1;//穴のプレハブ
     public GameObject buriedholePrefab1;//岩が埋まった穴のプレハブ
+    public GameObject goalPrefab;
     public Sprite buriedhole1;
 
+    PlayerContoroller playerCS; //PlayerControllerのスクリプト
 
     public int movingCount = 0;//移動中のものを数える
 
-    public const int maxObjNum = 2;//動かせるオブジェクトの最大数
-    const int stageHeight = 9;
-    const int stageWidth = 10;
+    int maxObjNum;//動かせるオブジェクトの最大数
+    int objNum = 0; //オブジェクトの設定に使用
+    int stageHeight;
+    int stageWidth;
 
     int[,] Board;//ステージの様子を記録
     OverObject[] terrain;//岩などの動くギミックは別で記録
@@ -42,109 +45,20 @@ public class StageManager : MonoBehaviour
     0.床
     1,2.壁
     3.氷
-    4.未使用
+    4.ゴール
     5.岩
     6.穴
     7岩の落ちた穴
-    オブジェクトのidは、(terrain配列の添え字+5)になるようにしました
     */
 
     // Start is called before the first frame update
     void Start()
     {
-        this.Board = new int[stageHeight, stageWidth]//マップをここで作る
-        {
-            { 2,2,2,2,2,2,2,2,2,2},
-            { 1,1,1,1,1,1,1,1,1,1},
-            { 1,0,0,0,0,1,0,0,0,1},
-            { 1,0,0,0,0,0,1,1,1,1},
-            { 1,0,0,3,0,0,1,0,0,1},
-            { 1,0,0,3,3,3,3,0,0,1},
-            { 1,3,0,0,1,0,0,0,0,1},
-            { 1,2,2,2,1,2,2,2,2,1},
-            { 1,1,1,1,1,1,1,1,1,1}
-        };
-        this.terrain = new OverObject[maxObjNum];//岩などのオブジェクトを増やすたびにmaxObjectNumを書き換えること
-        for (int i = 0; i < maxObjNum; i++)
-        {
-            this.terrain[i] = new OverObject();
-        }
+        playerCS = GameObject.Find("Char").GetComponent<PlayerContoroller>();
 
-
-
-        //岩の座標は一つずつ代入
-        this.terrain[0].id = 5; //id(現状0～2)がboardの壁床で使われているので、idは5から始める
-        this.terrain[0].x = 3;
-        this.terrain[0].y = 4;
-
-        //穴の座標も一つずつ代入
-        this.terrain[1].id = 6;
-        this.terrain[1].x = 2;
-        this.terrain[1].y = 3;
-
-        //ステージ生成
-        for (int x = 0; x < stageWidth; x++)
-        {
-            for (int y = 0; y < stageHeight; y++)
-            {
-
-                GameObject go;
-
-                switch (this.Board[stageHeight - y -1, x])
-                {
-                    case 0:
-                        go = Instantiate(this.floorPrefab) as GameObject;
-                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
-                        break;
-                    case 1:
-                        go = Instantiate(this.wallPrefab1) as GameObject;
-                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
-                        break;
-                    case 2:
-                        go = Instantiate(this.wallPrefab2) as GameObject;
-                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
-                        /*this.terrain[objectCount].gameObject = go;
-                        this.terrain[objectCount].id = 2;
-                        this.terrain[objectCount].x = x;
-                        this.terrain[objectCount].y = y;
-                        this.Board[x, y] = 0;
-                            
-                        objectCount++;*/
-                        break;
-                    case 3:
-                        go = Instantiate(this.icePrefab) as GameObject;
-                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
-                        break;
-
-                }
-
-            }
-        }
-
-        //岩などのオブジェクト生成
-        for (int i = 0; i < maxObjNum; i++)
-        {
-            if (terrain[i].id != 0)
-            {
-                GameObject go;
-                switch (terrain[i].id)
-                {
-                    //新たにid7の岩を出したい場合、ここにcase7: と宣言
-                    case 5:
-                        go = Instantiate(this.stonePrefab) as GameObject;
-                        go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
-                        terrain[i].gameObject = go;
-                        break;
-                    //新たに出したい穴のidをここにcaseで宣言
-                    case 6:
-                        go = Instantiate(this.holePrefab1) as GameObject;
-                        go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f - 0.25f, terrain[i].y + 10f);
-                        terrain[i].gameObject = go;
-                        break;
-                }
-            }
-
-        }
+        SetBoardInf(4);
+        SetTerrainInf(4);
+        GenerateStage();
     }
 
     // Update is called once per frame
@@ -267,5 +181,166 @@ public class StageManager : MonoBehaviour
         this.movingCount += num;
         return this.movingCount;
     }
+
+    //ステージ情報を設定
+    void SetBoardInf(int stage)
+    {
+        switch(stage)
+        {
+            case 1:
+                this.maxObjNum = 2;
+                this.stageHeight = 9;
+                this.stageWidth = 10;
+                this.Board = new int[9, 10]//マップをここで作る
+                {
+                    { 2,2,2,2,2,2,2,2,2,2},
+                    { 1,1,1,1,1,1,1,1,1,1},
+                    { 1,0,0,0,0,1,0,0,0,1},
+                    { 1,0,0,0,0,0,1,1,1,1},
+                    { 1,0,0,3,0,0,1,0,0,1},
+                    { 1,0,0,3,3,3,3,0,0,1},
+                    { 1,3,0,0,1,0,0,0,0,1},
+                    { 1,2,2,2,1,2,2,2,2,1},
+                    { 1,1,1,1,1,1,1,1,1,1}
+                };               
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                this.maxObjNum = 2;
+                this.stageHeight = 11;
+                this.stageWidth = 11;
+                this.Board = new int[11, 11]//マップをここで作る
+                {
+                    { 1,1,1,1,1,1,1,1,1,1,1},
+                    { 1,1,1,1,1,1,3,1,1,1,1},
+                    { 1,0,0,0,1,3,3,3,1,1,1},
+                    { 1,0,1,3,3,3,3,3,1,1,1},
+                    { 1,0,0,3,3,3,3,0,1,1,1},
+                    { 1,1,1,3,3,3,3,3,0,4,1},
+                    { 1,1,0,3,3,3,3,3,1,1,1},
+                    { 1,1,1,3,1,3,3,3,3,1,1},
+                    { 1,1,0,0,0,0,1,1,1,1,1},
+                    { 1,1,0,0,0,0,1,1,1,1,1},
+                    { 1,1,1,1,1,1,1,1,1,1,1},
+                };
+                break;
+                
+
+        }
+    }
+
+    //ステージ上のオブジェクトの情報を設定
+    void SetTerrainInf(int stage)
+    {
+        this.terrain = new OverObject[this.maxObjNum];//岩などのオブジェクトを増やすたびにmaxObjectNumを書き換えること
+        for (int i = 0; i < maxObjNum; i++)
+        {
+            this.terrain[i] = new OverObject();
+        }
+
+        switch (stage)
+        {
+            case 1:
+                AddObj(5, 3, 4);
+                AddObj(6, 2, 3);
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                AddObj(5, 3, 7);
+                AddObj(6, 5, 5);
+                playerCS.SetPos(3, 1);
+                break;
+
+        }
+    }
     
+    //ステージ上のオブジェクトを追加
+    void AddObj(int id, int x, int y)
+    {
+        this.terrain[this.objNum].x = x;
+        this.terrain[this.objNum].y = y;
+        this.terrain[this.objNum].id = id;
+        this.objNum++;
+    }
+
+    //ステージを生成
+    void GenerateStage()
+    {
+
+        //ステージ生成
+        for (int x = 0; x < this.stageWidth; x++)
+        {
+            for (int y = 0; y < this.stageHeight; y++)
+            {
+
+                GameObject go;
+
+                switch (this.Board[stageHeight - y - 1, x])
+                {
+                    case 0:
+                        go = Instantiate(this.floorPrefab) as GameObject;
+                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
+                        break;
+                    case 1:
+                        go = Instantiate(this.wallPrefab1) as GameObject;
+                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
+                        break;
+                    case 2:
+                        go = Instantiate(this.wallPrefab2) as GameObject;
+                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
+                        /*this.terrain[objectCount].gameObject = go;
+                        this.terrain[objectCount].id = 2;
+                        this.terrain[objectCount].x = x;
+                        this.terrain[objectCount].y = y;
+                        this.Board[x, y] = 0;
+                            
+                        objectCount++;*/
+                        break;
+                    case 3:
+                        go = Instantiate(this.icePrefab) as GameObject;
+                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
+                        break;
+                    case 4:
+                        go = Instantiate(this.goalPrefab) as GameObject;
+                        go.transform.position = new Vector3(x, y / 2.0f - 0.25f, 10 + y);
+                        break;
+
+
+                }
+
+            }
+        }
+
+        //岩などのオブジェクト生成
+        for (int i = 0; i < this.maxObjNum; i++)
+        {
+            if (terrain[i].id != 0)
+            {
+                GameObject go;
+                switch (terrain[i].id)
+                {
+                    //新たにid7の岩を出したい場合、ここにcase7: と宣言
+                    case 5:
+                        go = Instantiate(this.stonePrefab) as GameObject;
+                        go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f, terrain[i].y);
+                        terrain[i].gameObject = go;
+                        break;
+                    //新たに出したい穴のidをここにcaseで宣言
+                    case 6:
+                        go = Instantiate(this.holePrefab1) as GameObject;
+                        go.transform.position = new Vector3(terrain[i].x, terrain[i].y / 2.0f - 0.25f, terrain[i].y + 10f);
+                        terrain[i].gameObject = go;
+                        break;
+                }
+            }
+
+        }
+    }
+
 }

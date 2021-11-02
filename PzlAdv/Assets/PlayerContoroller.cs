@@ -27,9 +27,9 @@ public class PlayerContoroller : MonoBehaviour
         this.stageManagerS = this.stageManager.GetComponent<StageManager>();
 
         //初期位置を設定して配置
-        goalPosI = new Vector2Int(3, 3);    //ここで初期位置を設定
+        /*goalPosI = new Vector2Int(3, 3);    //ここで初期位置を設定
         goalPosF = ChangePosType(goalPosI);
-        this.transform.position = goalPosF;
+        this.transform.position = goalPosF;*/
 
         this.anim = GetComponent<Animator>();   //アニメ制御用
     }
@@ -258,5 +258,16 @@ public class PlayerContoroller : MonoBehaviour
     bool UnderIce(Vector2Int pos)
     {
         return this.stageManagerS.GetTargetId(pos.x, pos.y) == 3;
+    }
+
+    //プレイヤーを指定座標に飛ばす
+    public void SetPos(int x, int y)
+    {
+        this.goalPosI = new Vector2Int(x, y);
+        this.goalPosF = ChangePosType(goalPosI);
+        this.transform.position = this.goalPosF;
+        this.transform.Translate(0, 0, this.transform.position.y * 2 - this.transform.position.z);//z座標をy座標に
+        this.motion = Vector2.zero;
+        this.rigid.velocity = motion;
     }
 }
