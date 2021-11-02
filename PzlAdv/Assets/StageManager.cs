@@ -25,8 +25,8 @@ public class StageManager : MonoBehaviour
     public GameObject icePrefab;//氷のプレハブ
     public GameObject holePrefab1;//穴のプレハブ
     public GameObject buriedholePrefab1;//岩が埋まった穴のプレハブ
-    public GameObject goalPrefab;
-    public Sprite buriedhole1;
+    public GameObject goalPrefab;//ゴールのプレハブ
+    public Sprite buriedhole1;//岩の埋まった穴の画像
 
     PlayerContoroller playerCS; //PlayerControllerのスクリプト
 
@@ -36,9 +36,12 @@ public class StageManager : MonoBehaviour
     int objNum = 0; //オブジェクトの設定に使用
     int stageHeight;
     int stageWidth;
-
+    Vector2Int startPos; //プレイヤーのスタート地点
     int[,] Board;//ステージの様子を記録
     OverObject[] terrain;//岩などの動くギミックは別で記録
+
+    int stage = 3;//ステージ数を保存
+
     //Vector2Int rockGoalStep = new Vector2Int(); //岩の目標地点のマス目(現在はRockMove関数でしか使っていないが、滑らかに動かすときにUpdateなどで呼び出すことを想定してここで宣言)
     //Vector3 rockGoalPrint = new Vector3(); //岩の目標地点のtransform座標()
     /* マップの番号
@@ -56,15 +59,19 @@ public class StageManager : MonoBehaviour
     {
         playerCS = GameObject.Find("Char").GetComponent<PlayerContoroller>();
 
-        SetBoardInf(4);
-        SetTerrainInf(4);
+        SetBoardInf(this.stage);
+        SetTerrainInf(this.stage);
         GenerateStage();
+        playerCS.SetPos(this.startPos);
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ResetStage();
+        }
 
     }
 
@@ -172,7 +179,7 @@ public class StageManager : MonoBehaviour
         this.terrain[index].id = -1;
         this.terrain[index].x = -1;
         this.terrain[index].y = -1;
-        Destroy(this.terrain[index].gameObject);
+        this.terrain[index].gameObject.SetActive(false);
     }
 
     //movingCountを操作
@@ -189,29 +196,56 @@ public class StageManager : MonoBehaviour
         {
             case 1:
                 this.maxObjNum = 2;
-                this.stageHeight = 9;
+                this.stageHeight = 10;
                 this.stageWidth = 10;
-                this.Board = new int[9, 10]//マップをここで作る
+                this.startPos = new Vector2Int(3, 3);
+                this.Board = new int[10, 10]//マップをここで作る
                 {
-                    { 2,2,2,2,2,2,2,2,2,2},
                     { 1,1,1,1,1,1,1,1,1,1},
-                    { 1,0,0,0,0,1,0,0,0,1},
-                    { 1,0,0,0,0,0,1,1,1,1},
-                    { 1,0,0,3,0,0,1,0,0,1},
-                    { 1,0,0,3,3,3,3,0,0,1},
-                    { 1,3,0,0,1,0,0,0,0,1},
-                    { 1,2,2,2,1,2,2,2,2,1},
-                    { 1,1,1,1,1,1,1,1,1,1}
+                    { 1,2,2,2,2,2,1,2,2,1},
+                    { 1,0,0,0,0,0,1,0,0,1},
+                    { 1,0,0,0,0,0,1,0,0,1},
+                    { 1,0,0,2,0,0,1,0,0,1},
+                    { 1,0,0,1,0,0,2,0,0,0},
+                    { 1,0,0,1,0,0,0,0,0,1},
+                    { 1,0,0,1,0,0,0,0,0,1},
+                    { 1,1,1,1,1,1,1,1,1,1},
+                    { 2,2,2,2,2,2,2,2,2,2}
                 };               
                 break;
             case 2:
+                this.maxObjNum = 2;
+                this.stageHeight = 10;
+                this.stageWidth = 10;
+                this.startPos = new Vector2Int(3, 3);
+                //this.Board = new int[9, 10]//マップをここで作る
                 break;
             case 3:
+                this.maxObjNum = 4;
+                this.stageHeight = 12;
+                this.stageWidth = 10;
+                this.startPos = new Vector2Int(3, 3);
+                this.Board = new int[12, 10]//マップをここで作る
+                {
+                    { 1,1,1,1,1,1,1,1,1,1},
+                    { 1,2,2,2,2,1,2,2,2,1},
+                    { 1,0,0,0,0,2,3,3,3,1},
+                    { 1,0,0,3,3,3,3,3,3,1},
+                    { 1,3,3,3,3,3,3,3,3,4},
+                    { 1,0,0,3,3,3,3,3,3,1},
+                    { 1,0,0,0,3,3,3,3,3,1},
+                    { 1,0,0,0,3,3,3,3,3,1},
+                    { 1,0,0,0,3,3,3,3,3,1},
+                    { 1,3,0,0,1,0,3,3,3,1},
+                    { 1,1,1,1,1,1,1,1,1,1},
+                    { 2,2,2,2,2,2,2,2,2,2}
+                };
                 break;
             case 4:
                 this.maxObjNum = 2;
                 this.stageHeight = 11;
                 this.stageWidth = 11;
+                this.startPos = new Vector2Int(3, 1);
                 this.Board = new int[11, 11]//マップをここで作る
                 {
                     { 1,1,1,1,1,1,1,1,1,1,1},
@@ -235,6 +269,7 @@ public class StageManager : MonoBehaviour
     //ステージ上のオブジェクトの情報を設定
     void SetTerrainInf(int stage)
     {
+        this.objNum = 0;
         this.terrain = new OverObject[this.maxObjNum];//岩などのオブジェクトを増やすたびにmaxObjectNumを書き換えること
         for (int i = 0; i < maxObjNum; i++)
         {
@@ -250,11 +285,14 @@ public class StageManager : MonoBehaviour
             case 2:
                 break;
             case 3:
+                AddObj(5, 3, 5);
+                AddObj(5, 7, 3);
+                AddObj(6, 8, 4);
+                AddObj(6, 1, 4);
                 break;
             case 4:
                 AddObj(5, 3, 7);
-                AddObj(6, 5, 5);
-                playerCS.SetPos(3, 1);
+                AddObj(6, 5, 5);               
                 break;
 
         }
@@ -317,7 +355,13 @@ public class StageManager : MonoBehaviour
             }
         }
 
-        //岩などのオブジェクト生成
+        GenerateTerrain();
+        
+    }
+
+    //オブジェを生成
+    void GenerateTerrain()
+    {
         for (int i = 0; i < this.maxObjNum; i++)
         {
             if (terrain[i].id != 0)
@@ -341,6 +385,26 @@ public class StageManager : MonoBehaviour
             }
 
         }
+    }
+
+    //ステージをリセットする
+    void ResetStage()
+    {
+        //オブジェをすべて削除
+        for (int i = 0; i < this.maxObjNum; i++)
+        {
+            Destroy(this.terrain[i].gameObject);
+        }
+        //terrainを最初の状態に復元
+        SetTerrainInf(this.stage);
+        //再生成
+        GenerateTerrain();
+        //プレイヤーもリセット
+        playerCS.SetPos(this.startPos);
+        playerCS.Reset();
+        playerCS.ResetDirection();
+        //movingCountのリセット
+        this.movingCount = 0;
     }
 
 }

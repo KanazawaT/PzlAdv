@@ -6,7 +6,8 @@ public class PlayerContoroller : MonoBehaviour
 {
     //なんか色々と初期設定
     public Rigidbody2D rigid;
-    float speed = 3.0f; //移動スピード
+    const float DefaultSpeed = 3.0f;
+    float speed = DefaultSpeed; //移動スピード
     int direction = 0; //向き(0:↑, 1:→, 2:↓, 3:←)
     public Vector2 motion;   //移動のベクトル
     Vector2 goalPosF;    //移動で目指す実際の座標
@@ -14,7 +15,7 @@ public class PlayerContoroller : MonoBehaviour
     bool getKey;    //キー入力があったかの判定用
     bool isMoving = false;  //移動中ならtrueそうでなければfalse
     float heightProp = 0.5f;    //マスの縦の比率を設定する(1.0fで横と同じ、0.5fで半分)
-    bool withRock = false; //岩と一緒かどうか
+    bool withRock = false; //岩と移動してるか
     Animator anim;       //アニメ制御用
 
     public GameObject stageManager; //StageManagerを呼び出す
@@ -25,11 +26,6 @@ public class PlayerContoroller : MonoBehaviour
     {
 
         this.stageManagerS = this.stageManager.GetComponent<StageManager>();
-
-        //初期位置を設定して配置
-        /*goalPosI = new Vector2Int(3, 3);    //ここで初期位置を設定
-        goalPosF = ChangePosType(goalPosI);
-        this.transform.position = goalPosF;*/
 
         this.anim = GetComponent<Animator>();   //アニメ制御用
     }
@@ -153,28 +149,21 @@ public class PlayerContoroller : MonoBehaviour
                         }
                         else
                         {
+                            //岩が押せない
                             return false;
                         }
                     }
                     else
                     {
+                        //移動開始時じゃないと岩は押せない
                         return false;
                     }
                 }                
                 else
-                {
-                    withRock = false;
-
+                {                   
                     if (UnderIce(goalPosI))
                     {
-                        if (withRock)
-                        {
-                            this.speed = 3.0f;
-                        }
-                        else
-                        {
-                            this.speed = 4.0f;
-                        }
+                        this.speed = 4.0f;
                     }
                     else
                     {
@@ -209,14 +198,11 @@ public class PlayerContoroller : MonoBehaviour
     {
         this.transform.position = this.goalPosF;
         this.transform.Translate(0, 0, this.transform.position.y*2 - this.transform.position.z);//z座標をy座標に
-        this.motion = Vector2.zero;
-        this.rigid.velocity = motion;
 
-        isMoving = false;
+        Reset();
+
         //movingCountをへらす
         stageManagerS.MovingCount(-1);
-
-        anim.SetFloat("speed", 0.0f);    //移動止めたらアニメーション停止
 
     }
 
@@ -260,14 +246,30 @@ public class PlayerContoroller : MonoBehaviour
         return this.stageManagerS.GetTargetId(pos.x, pos.y) == 3;
     }
 
-    //プレイヤーを指定座標に飛ばす
-    public void SetPos(int x, int y)
+    //座標をセット
+    public void SetPos(Vector2Int pos)
     {
-        this.goalPosI = new Vector2Int(x, y);
+        this.goalPosI = new Vector2Int(pos.x, pos.y);
         this.goalPosF = ChangePosType(goalPosI);
         this.transform.position = this.goalPosF;
         this.transform.Translate(0, 0, this.transform.position.y * 2 - this.transform.position.z);//z座標をy座標に
+    }
+
+    //座標系と向き以外をリセット
+    public void Reset()
+    {
+        this.isMoving = false;
+        this.withRock = false;
+        this.speed = DefaultSpeed;
         this.motion = Vector2.zero;
         this.rigid.velocity = motion;
+        anim.SetFloat("speed", 0.0f);
+    }
+
+    //向きをリセット
+    public void ResetDirection()
+    {
+        this.direction = 0;
+        anim.SetInteger("direction", 0);
     }
 }
