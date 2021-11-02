@@ -40,7 +40,7 @@ public class StageManager : MonoBehaviour
     int[,] Board;//ステージの様子を記録
     OverObject[] terrain;//岩などの動くギミックは別で記録
 
-    int stage = 2;//ステージ数を保存
+    int stage;//ステージ数を保存
 
     //Vector2Int rockGoalStep = new Vector2Int(); //岩の目標地点のマス目(現在はRockMove関数でしか使っていないが、滑らかに動かすときにUpdateなどで呼び出すことを想定してここで宣言)
     //Vector3 rockGoalPrint = new Vector3(); //岩の目標地点のtransform座標()
@@ -58,6 +58,8 @@ public class StageManager : MonoBehaviour
     void Start()
     {
         playerCS = GameObject.Find("Char").GetComponent<PlayerContoroller>();
+
+        this.stage = TitleManager.stage;
 
         SetBoardInf(this.stage);
         SetTerrainInf(this.stage);
