@@ -462,13 +462,12 @@ public class StageManager : MonoBehaviour
     public void Clear()
     {
         StartCoroutine(SceneChange());
+        cText.text = "ステージクリア";
     }
 
     IEnumerator SceneChange()
     {
-        yield return new WaitForSeconds(0.5f);
-        cText.text = "ステージクリア";
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.5f);
         fade.SetActive(true);
         yield return new WaitForSeconds(2.0f);
         SceneManager.LoadScene("Scenes/Title");

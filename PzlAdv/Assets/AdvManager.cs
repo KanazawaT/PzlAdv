@@ -453,6 +453,10 @@ public class AdvManager : MonoBehaviour
         }
         else
         {
+            if (this.part == 5)
+            {
+                TitleManager.stage = -1;
+            }
             SceneManager.LoadScene("Scenes/Title");
         }
         

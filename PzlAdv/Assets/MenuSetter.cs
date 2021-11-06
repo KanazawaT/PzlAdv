@@ -7,10 +7,13 @@ public class MenuSetter : MonoBehaviour
 {
 
     public GameObject panel;
-    public GameObject restartButton; //RESTARTボタン
-    public GameObject giveupButton;
-    public GameObject returnButton;//ネクストボタン
+    //public GameObject restartButton; //RESTARTボタン
+    //public GameObject giveupButton;
+    //public GameObject returnButton;//ネクストボタン
     // Start is called before the first frame update
+
+    bool isPanelActive = false;
+
     void Start()
     {
         //ボタンを非表示にする
@@ -22,15 +25,20 @@ public class MenuSetter : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            panel.SetActive(true); //パネルを表示する
-        }
-        else
-        {
-
+            if (isPanelActive)
+            {
+                PanelDelete();
+            }
+            else
+            {
+                panel.SetActive(true); //パネルを表示する
+                isPanelActive = true;
+            }
         }
     }
     public void PanelDelete()
     {
         panel.SetActive(false);
+        isPanelActive = false;
     }
 }
